@@ -6,7 +6,10 @@ int main() {
     string location;
     double overstateAmount = 0;
     double fine = 0;
-    double addRate = 0.153;
+    double lowFineRate = 0.153;
+    double highFineRate = 0.18;
+    double secondaryFineRate;
+    int deciPrecision = 3;
     
     cout << "Identification: ";
     getline(cin,propIdentification);
@@ -37,21 +40,24 @@ int main() {
     
 
     if (location == "florida" || location == "new york"){
-        addRate = 0.18;
+        secondaryFineRate = highFineRate;
+    }
+    else{
+        secondaryFineRate = lowFineRate;
     }
     
     if (overstateAmount <= 60){
         fine = overstateAmount*0.1111;
     }
     else if (overstateAmount <=150){
-        fine = 60*0.1111+(overstateAmount-60)*addRate;
+        fine = 60*0.1111+(overstateAmount-60)*secondaryFineRate;
     }
     else{
-        fine = 60*0.1111+90*addRate+(overstateAmount-150)*0.21;
+        fine = 60*0.1111+90*secondaryFineRate+(overstateAmount-150)*0.21;
     }
     cout<<"---"<<endl;
     cout.setf(ios::fixed);
-    cout.precision(3);
+    cout.precision(deciPrecision);
     cout<<"The fine for "<<propIdentification<<" is $"<<fine<<" million."<<endl;
     return 0;
 }
