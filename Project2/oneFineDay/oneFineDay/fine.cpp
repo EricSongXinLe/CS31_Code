@@ -11,6 +11,7 @@ int main() {
     cout << "Identification: ";
     getline(cin,propIdentification);
     if (propIdentification == ""){
+        cout << "---" << endl;
         cout << "You must enter a property identification." << endl;
         return 1;
     }
@@ -20,6 +21,7 @@ int main() {
     cin >> overstateAmount;
     cin.ignore(10000, '\n');
     if (overstateAmount<=0){
+        cout << "---" << endl;
         cout<<"The overstated amount must be positive."<<endl;
         return 1;
     }
@@ -28,10 +30,12 @@ int main() {
     cout <<"Location: ";
     getline(cin,location);
     if (location == ""){
+        cout << "---" << endl;
         cout << "You must enter a location." << endl;
         return 1;
     }
     
+
     if (location == "florida" || location == "new york"){
         addRate = 0.18;
     }
