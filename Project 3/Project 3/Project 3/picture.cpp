@@ -1,23 +1,44 @@
 #include "grid.h"
 
 void plotHorizontalLine(int r, int c, int distance, char ch){
-    for (int i =0; i<distance;i++){
-        setChar(r, c+distance, ch);
+    const int GRAPH_ROWS = getRows();
+    const int GRAPH_COLS = getCols();
+    int currentCol;
+    for (int i =0; i<=distance;i++){
+        currentCol = c+i;
+        if (currentCol > GRAPH_COLS || r > GRAPH_ROWS){
+            break;
+        }
+        else{
+            setChar(r, currentCol, ch);
+        }
     }
-    //function IN PROGRESS, MISSING CODE
+}
+void plotVerticalLine(int r, int c, int distance, char ch){
+    const int GRAPH_ROWS = getRows();
+    const int GRAPH_COLS = getCols();
+    int currentRow;
+    for (int i =0; i<=distance;i++){
+        currentRow = r+i;
+        if (currentRow > GRAPH_ROWS || c > GRAPH_COLS){
+            break;
+        }
+        else{
+            setChar(currentRow, c, ch);
+        }
+    }
+}
+void plotRectangle(int r, int c, int height, int width, char ch){
+    const int GRAPH_ROWS = getRows();
+    const int GRAPH_COLS = getCols();
+    plotHorizontalLine(r, c, width, ch);
+    plotVerticalLine(r, c, height, ch);
+    plotHorizontalLine(r+width, c, width, ch);
+    plotVerticalLine(r, c+height, height, ch);
 }
 int main()
 {
     setSize(20, 30);
-    for (int r = 3; r <= 9; r += 2)
-        plotHorizontalLine(r, 13, 17, '=');
-    for (int r = 11; r <= 17; r += 2)
-        plotHorizontalLine(r, 1, getCols()-1, '=');
-    for (int r = 3; r <= 9; r += 2)
-        for (int c = 1; c <= 11; c += 2)
-            setChar(r, c, '*');
-    for (int r = 4; r <= 8; r += 2)
-        for (int c = 2; c <= 10; c += 2)
-            setChar(r, c, '*');
+    plotRectangle(2, 2, 5, 0, '%');
     draw();
 }
