@@ -29,8 +29,6 @@ void plotVerticalLine(int r, int c, int distance, char ch){
     }
 }
 void plotRectangle(int r, int c, int height, int width, char ch){
-    const int GRAPH_ROWS = getRows();
-    const int GRAPH_COLS = getCols();
     plotHorizontalLine(r, c, width, ch);
     plotVerticalLine(r, c, height, ch);
     plotHorizontalLine(r+width, c, width, ch);
@@ -39,6 +37,6 @@ void plotRectangle(int r, int c, int height, int width, char ch){
 int main()
 {
     setSize(20, 30);
-    plotRectangle(2, 2, 5, 0, '%');
+    plotRectangle(2, 2, 5, 5, '%');
     draw();
 }
