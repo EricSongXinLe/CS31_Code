@@ -90,7 +90,18 @@ bool plotLine(int r, int c, int distance, int dir, char plotChar, int fgbg){
         if ( !(validChar(plotChar) && validFgbg(fgbg))){ //Char and Fgbg is NOT BOTH valid
             return false;
         }
-        return true;
+        if (distance >=0){
+            for (int i =0; i<=distance;i++){ //Print distance+1 'ch's.
+                setChar(r, c+i, plotChar);
+            }
+            return true;
+        }
+        else{ //DISTANCE <0;
+            for (int i =0; i<= (0-distance);i++){
+                setChar(r, c-i, plotChar); //PLOTTING REVERSELY
+            }
+            return true;
+        }
     }
     else if (dir == VERT){ //DRAW VERTICAL LINE
         if ( !validVertDistance(r, distance)){ //INVALID VERTICAL DISTANCE
@@ -99,7 +110,18 @@ bool plotLine(int r, int c, int distance, int dir, char plotChar, int fgbg){
         if ( !(validChar(plotChar) && validFgbg(fgbg))){ //Char and Fgbg is NOT BOTH valid
             return false;
         }
-        return true;
+        if (distance >=0){
+            for (int i =0; i<=distance;i++){ //Print distance+1 'ch's.
+                setChar(r+i, c, plotChar);
+            }
+            return true;
+        }
+        else{
+            for (int i =0; i<= (0-distance);i++){
+                setChar(r-i, c, plotChar); //PLOTTING REVERSELY
+            }
+            return true;
+        }
     }
     else{ //INVALID DIR
         return false;
