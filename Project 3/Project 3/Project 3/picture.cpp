@@ -49,34 +49,36 @@ void plotRectangle(int r, int c, int height, int width, char ch){
 
 //-------------------START-----OF----PHASE----TWO----------------//
 bool validPlotLineParameter(int r, int c, int distance, int dir, char plotChar, int fgbg){
-    if( !(dir == HORIZ || dir == VERT)){ //DIRECTION is not horizontal or vertical
-        return false; //ends this sub-routine
-    }
-    if( !(fgbg == FG || fgbg == BG)){ //fgbg input is not valid
-        return false;
-    }
     if(dir == HORIZ){ //only check COLUMN if direction is HORIZONTAL
         if (c+distance <= 0 || c+distance > getCols()){
             return false;
         }
     }
-    if(dir == VERT){  //only check ROWS if direction is VERTICAL
+    else if(dir == VERT){  //only check ROWS if direction is VERTICAL
         if (r+distance <=0 || r+distance > getRows()){
             return false;
         }
     }
     // r+distance and c+distance calculates the rightmost or leftmost char will be plotted. If the last character is in the plot, the whole line will be in the plot.
     // return false; will be executed when ROW or COL exceeds the boundary of the plot. [ONLY 1 to getRows() or getCols() is accepted.]
+    else{ //DIRECTION is not horizontal or vertical
+        return false;
+    }
     
+    if( !(fgbg == FG || fgbg == BG)){ //fgbg input is not valid
+        return false;
+    }
     if( !isprint(plotChar)){
         return false;
     }
     return true;
 }
+
 bool plotLine(int r, int c, int distance, int dir, char plotChar, int fgbg){
     if( !validPlotLineParameter(r, c, distance, dir, plotChar, fgbg)){ //invalid parameter
         return false; //ends funciton
     }
+    
     return true;
 }
 
@@ -84,7 +86,7 @@ bool plotLine(int r, int c, int distance, int dir, char plotChar, int fgbg){
 int main()
 {
     setSize(20, 15);  // grid has 20 rows, 15 columns
-    if ( ! plotLine(14, 8, 3, HORIZ, '*', FG))   // first call
+    if ( ! plotLine(14, 10, 6, VERT, '*', FG))   // first call
        cout << "1) Plotting failed when it shouldn't have!" << endl;
     if ( ! plotLine(15, 10, -2, VERT, '@', FG))  // second call
        cout << "2) Plotting failed when it shouldn't have!" << endl;
