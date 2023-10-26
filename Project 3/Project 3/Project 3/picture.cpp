@@ -92,12 +92,12 @@ bool plotLine(int r, int c, int distance, int dir, char plotChar, int fgbg){
         }
         if (distance >=0){
             if (fgbg == FG){
-                for (int i =0; i<=distance;i++){ //Print distance+1 'ch's.
-                    setChar(r, c+i, plotChar);
+                for (int i =0; i<=distance;i++){ //Print the character at distance +1
+                    setChar(r, c+i, plotChar); //For all HORIZ lines, col changes every time it loops.
                 }
             }
             else{ //BG
-                for (int i =0; i<=distance;i++){ //Print BG
+                for (int i =0; i<=distance;i++){ //Print the character at distance +1
                     if(getChar(r, c+i)==' '){
                         setChar(r, c+i, plotChar);
                     }
@@ -108,7 +108,7 @@ bool plotLine(int r, int c, int distance, int dir, char plotChar, int fgbg){
         else{ //DISTANCE <0;
             if (fgbg == FG){
                 for (int i =0; i<= (0-distance);i++){ //Print distance+1 'ch's.
-                    setChar(r, c-i, plotChar);
+                    setChar(r, c-i, plotChar); // c-i because the line is going the other direction.
                 }
             }
             else{ //BG
@@ -151,7 +151,7 @@ bool plotLine(int r, int c, int distance, int dir, char plotChar, int fgbg){
             }
             else{ //BG
                 for (int i =0; i<= (0-distance);i++){ //Print BG
-                    if(getChar(r-i, c)==' '){
+                    if(getChar(r-i, c)==' '){ //ABLE TO PRINT
                         setChar(r-i, c, plotChar);
                     }
                 }
@@ -163,7 +163,7 @@ bool plotLine(int r, int c, int distance, int dir, char plotChar, int fgbg){
         return false;
     }
 }
-
+//-------------------END-----OF----PHASE----TWO----------------//
 
 int main()
 {
