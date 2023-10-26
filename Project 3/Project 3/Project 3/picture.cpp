@@ -48,51 +48,76 @@ void plotRectangle(int r, int c, int height, int width, char ch){
 //-------------------END-----OF----PHASE----ONE----------------//
 
 //-------------------START-----OF----PHASE----TWO----------------//
-bool validPlotLineParameter(int r, int c, int distance, int dir, char plotChar, int fgbg){
-    if(dir == HORIZ){ //only check COLUMN if direction is HORIZONTAL
-        if (c+distance <= 0 || c+distance > getCols()){
-            return false;
-        }
-    }
-    else if(dir == VERT){  //only check ROWS if direction is VERTICAL
-        if (r+distance <=0 || r+distance > getRows()){
-            return false;
-        }
-    }
-    // r+distance and c+distance calculates the rightmost or leftmost char will be plotted. If the last character is in the plot, the whole line will be in the plot.
-    // return false; will be executed when ROW or COL exceeds the boundary of the plot. [ONLY 1 to getRows() or getCols() is accepted.]
-    else{ //DIRECTION is not horizontal or vertical
+
+bool validHorizDistance(int c, int distance){
+    //only check COLUMN if direction is HORIZONTAL
+    if (c+distance <= 0 || c+distance > getCols()){
         return false;
     }
-    
+    return true;
+}
+
+bool validVertDistance(int r, int distance){
+    //only check ROWS if direction is VERTICAL
+    if (r+distance <=0 || r+distance > getRows()){
+        return false;
+    }
+    return true;
+}
+// r+distance and c+distance calculates the rightmost or leftmost char will be plotted. If the last character is in the plot, the whole line will be in the plot.
+// return false; will be executed when ROW or COL exceeds the boundary of the plot. [ONLY 1 to getRows() or getCols() is accepted.]
+
+bool validFgbg(int fgbg){
     if( !(fgbg == FG || fgbg == BG)){ //fgbg input is not valid
         return false;
     }
+    return true;
+}
+
+bool validChar(char plotChar){
     if( !isprint(plotChar)){
         return false;
     }
     return true;
 }
 
+
 bool plotLine(int r, int c, int distance, int dir, char plotChar, int fgbg){
-    if( !validPlotLineParameter(r, c, distance, dir, plotChar, fgbg)){ //invalid parameter
-        return false; //ends funciton
+    if (dir == HORIZ){ //DRAW HORIZONTAL LINE
+        if ( !validHorizDistance(c, distance)){ //INVALID HORIZONTAL DISTANCE
+            return false;
+        }
+        if ( !(validChar(plotChar) && validFgbg(fgbg))){ //Char and Fgbg is NOT BOTH valid
+            return false;
+        }
+        return true;
     }
-    
-    return true;
+    else if (dir == VERT){ //DRAW VERTICAL LINE
+        if ( !validVertDistance(r, distance)){ //INVALID VERTICAL DISTANCE
+            return false;
+        }
+        if ( !(validChar(plotChar) && validFgbg(fgbg))){ //Char and Fgbg is NOT BOTH valid
+            return false;
+        }
+        return true;
+    }
+    else{ //INVALID DIR
+        return false;
+    }
 }
 
 
 int main()
 {
-    setSize(20, 15);  // grid has 20 rows, 15 columns
-    if ( ! plotLine(14, 10, 6, VERT, '*', FG))   // first call
-       cout << "1) Plotting failed when it shouldn't have!" << endl;
-    if ( ! plotLine(15, 10, -2, VERT, '@', FG))  // second call
-       cout << "2) Plotting failed when it shouldn't have!" << endl;
-    if ( ! plotLine(13, 8, 3, HORIZ, '#', BG))   // third call
-       cout << "3) Plotting failed when it shouldn't have!" << endl;
-    if (plotLine(13, 14, 3, HORIZ, 'X', FG))     // fourth call
-       cout << "4) Plotting succeeded when it shouldn't have!" << endl;
-    draw();
+    setSize(2, 12);  // 2 rows, 12 columns
+    assert(plotLine(1, 1, 0, HORIZ, 'H', FG));
+    assert(plotLine(1, 2, 0, HORIZ, 'i', FG));
+    assert(plotLine(1, 3, 0, HORIZ, '!', FG));
+    draw();  //  displays  Hi!  in the top row of the grid
+    assert(plotLine(1, 3, 0, HORIZ, ' ', FG));
+    draw();  //  displays  Hi   in the top row of the grid
+    assert(plotLine(1, 1, 10, HORIZ, ' ', BG));
+    draw();  //  displays  Hi   in the top row of the grid
+    assert( ! plotLine(1, 1, 10, HORIZ, '\n', FG));
+    draw();  //  displays  Hi   in the top row of the grid
 }
