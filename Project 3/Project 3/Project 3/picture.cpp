@@ -91,14 +91,32 @@ bool plotLine(int r, int c, int distance, int dir, char plotChar, int fgbg){
             return false;
         }
         if (distance >=0){
-            for (int i =0; i<=distance;i++){ //Print distance+1 'ch's.
-                setChar(r, c+i, plotChar);
+            if (fgbg == FG){
+                for (int i =0; i<=distance;i++){ //Print distance+1 'ch's.
+                    setChar(r, c+i, plotChar);
+                }
+            }
+            else{ //BG
+                for (int i =0; i<=distance;i++){ //Print BG
+                    if(getChar(r, c+i)==' '){
+                        setChar(r, c+i, plotChar);
+                    }
+                }
             }
             return true;
         }
         else{ //DISTANCE <0;
-            for (int i =0; i<= (0-distance);i++){
-                setChar(r, c-i, plotChar); //PLOTTING REVERSELY
+            if (fgbg == FG){
+                for (int i =0; i<= (0-distance);i++){ //Print distance+1 'ch's.
+                    setChar(r, c-i, plotChar);
+                }
+            }
+            else{ //BG
+                for (int i =0; i<= (0-distance);i++){ //Print BG
+                    if(getChar(r, c-i)==' '){
+                        setChar(r, c-i, plotChar);
+                    }
+                }
             }
             return true;
         }
@@ -111,14 +129,32 @@ bool plotLine(int r, int c, int distance, int dir, char plotChar, int fgbg){
             return false;
         }
         if (distance >=0){
-            for (int i =0; i<=distance;i++){ //Print distance+1 'ch's.
-                setChar(r+i, c, plotChar);
+            if (fgbg == FG){
+                for (int i =0; i<=distance;i++){ //Print distance+1 'ch's.
+                    setChar(r+i, c, plotChar);
+                }
+            }
+            else{ //BG
+                for (int i =0; i<=distance;i++){ //Print BG
+                    if(getChar(r+i, c)==' '){
+                        setChar(r+i, c, plotChar);
+                    }
+                }
             }
             return true;
         }
-        else{
-            for (int i =0; i<= (0-distance);i++){
-                setChar(r-i, c, plotChar); //PLOTTING REVERSELY
+        else{ //REVERSELY
+            if (fgbg == FG){
+                for (int i =0; i<= (0-distance);i++){ //Print distance+1 'ch's.
+                    setChar(r-i, c, plotChar);
+                }
+            }
+            else{ //BG
+                for (int i =0; i<= (0-distance);i++){ //Print BG
+                    if(getChar(r-i, c)==' '){
+                        setChar(r-i, c, plotChar);
+                    }
+                }
             }
             return true;
         }
