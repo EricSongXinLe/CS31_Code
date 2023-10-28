@@ -165,17 +165,116 @@ bool plotLine(int r, int c, int distance, int dir, char plotChar, int fgbg){
 }
 //-------------------END-----OF----PHASE----TWO----------------//
 
+//-------------------START-----OF----PHASE----THREE----------------//
+int performCommands(string commandString, char& plotChar, int& mode, int& badPos){
+    int i =0;
+    while(i!=commandString.size()){
+        //IF BRANCHES:
+        //1. 'H' or 'h' [FOLLOWED BY NUMBER or '-' AND NUMBER]
+        //2. 'V' or 'v' [FOLLOWED BY NUMBER or '-' AND NUMBER]
+        //3. 'C' or 'c' (SETS grid to all spaces, CurrentPos to [1,1], CurrentChar to '*', FG mode)
+        //4. 'F' or 'f' [FOLLOWED BY ONE CHAR]
+        //5. 'B' or 'b' [FOLLOWED BY ONE CHAR]
+        //WRITING UP Code for C/F/B Types
+        if(commandString.at(i) == 'C' || commandString.at(i) == 'c'){
+            //SETS grid to all spaces, CurrentPos to [1,1], CurrentChar to '*', FG mode
+            clearGrid();
+            plotChar = '*';
+            mode = FG;
+            //SET pos to 1,1 pending
+            i++;
+            continue; //Processing of 'C' is complete
+        }
+        else if (commandString.at(i) == 'F' || commandString.at(i) == 'f'){
+            if (i!= commandString.size()-1){ //F is followed by a command
+                i++; // Proceed to next character
+                if(validChar(commandString.at(i))){ //Able to proceed with program
+                    mode =  FG;
+                    plotChar = commandString.at(i); //set mode and char
+                    i++;
+                    //Proceed to next character
+                    continue;
+                }
+                else{ //inprintable character
+                    return 2;
+                }
+            }
+            else{ // command string ends but a character is expected
+                badPos = commandString.size();
+                return 1;
+            }
+        }
+        else if (commandString.at(i) == 'B' || commandString.at(i) == 'b'){
+            if (i!= commandString.size()-1){ //F is followed by a command
+                i++; // Proceed to next character
+                if(validChar(commandString.at(i))){ //Able to proceed with program
+                    mode =  BG;
+                    plotChar = commandString.at(i); //set mode and char
+                    i++;
+                    //Proceed to next character
+                    continue;
+                }
+                else{ //inprintable character
+                    return 2;
+                }
+            }
+            else{ // command string ends but a character is expected
+                badPos = commandString.size();
+                return 1;
+            }
+        }
+        
+    }
+    return 0;
+}
+
 int main()
 {
-    setSize(2, 12);  // 2 rows, 12 columns
-    assert(plotLine(1, 1, 0, HORIZ, 'H', FG));
-    assert(plotLine(1, 2, 0, HORIZ, 'i', FG));
-    assert(plotLine(1, 3, 0, HORIZ, '!', FG));
-    draw();  //  displays  Hi!  in the top row of the grid
-    assert(plotLine(1, 3, 0, HORIZ, ' ', FG));
-    draw();  //  displays  Hi   in the top row of the grid
-    assert(plotLine(1, 1, 10, HORIZ, ' ', BG));
-    draw();  //  displays  Hi   in the top row of the grid
-    assert( ! plotLine(1, 1, 10, HORIZ, '\n', FG));
-    draw();  //  displays  Hi   in the top row of the grid
+    for (;;)
+        {
+            cout << "Enter the number of grid rows and columns (max 30 each): ";
+            int nRows;
+            int nCols;
+            cin >> nRows >> nCols;
+            cin.ignore(10000, '\n');
+            if (nRows >= 1  &&  nRows <= MAXROWS  &&  nCols >= 1  &&  nCols <= MAXCOLS)
+            {
+                setSize(nRows, nCols);
+                break;
+            }
+            cout << "The numbers must be between 1 and 30." << endl;
+        }
+        char currentChar = '*';
+        int currentMode = FG;
+        for (;;)
+        {
+            cout << "Enter a command string (empty line to quit): ";
+            string cmd;
+            getline(cin, cmd);
+            if (cmd == "")
+                break;
+            int position;
+            int status = performCommands(cmd, currentChar, currentMode, position);
+            switch (status)
+            {
+              case 0:
+                draw();
+                break;
+              case 1:
+                cout << "Syntax error at position " << position << endl;
+                break;
+              case 2:
+                if (!isprint(currentChar))
+                    cout << "Current character is not printable" << endl;
+                if (currentMode != FG  &&  currentMode != BG)
+                    cout << "Current mode is " << currentMode << ", not FG or BG" << endl;
+                break;
+              case 3:
+                cout << "Cannot perform command at position " << position << endl;
+                break;
+              default:
+                  // It should be impossible to get here.
+                cout << "performCommands returned " << status << "!" << endl;
+            }
+        }
 }
