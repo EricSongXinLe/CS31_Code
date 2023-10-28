@@ -166,8 +166,78 @@ bool plotLine(int r, int c, int distance, int dir, char plotChar, int fgbg){
 //-------------------END-----OF----PHASE----TWO----------------//
 
 //-------------------START-----OF----PHASE----THREE----------------//
+bool checkCommands(string commandString, char& plotChar, int& mode, int& badPos){
+    int j=0;
+    while (j!=commandString.size()){
+        if(commandString.at(j) == 'C' || commandString.at(j) == 'c'){
+            j++;
+            continue;
+        }
+        else if(commandString.at(j) == 'F' || commandString.at(j) == 'f'){
+            if(j!= commandString.size()-1){ //F is followed by char
+                j+=2; //Move to the next next character.
+            }
+            else{ //Commands ended with F.
+                badPos = j;
+                return true;
+            }
+        }
+        else if(commandString.at(j) == 'B' || commandString.at(j) == 'b'){
+            if(j!= commandString.size()-1){ //B is followed by char
+                j+=2; //Move to the next next character.
+            }
+            else{ //Commands ended with B.
+                badPos = j;
+                return true;
+            }
+        }
+        else if(commandString.at(j) == 'H' || commandString.at(j) == 'h' || commandString.at(j) == 'V' || commandString.at(j) == 'v'){
+            if(j!= commandString.size()-1){ //H is followed by char
+                j++; //Move to the next next character.
+                if(48 <= commandString.at(j) && commandString.at(j) <= 57){ // 48 equals to '0', 57 equals to '9', ASCII code is continuous.
+                    if(48 <= commandString.at(j+1) && commandString.at(j+1) <= 57){
+                        //2-digit, NO '-' sign situation
+                        j+=2;
+                    }
+                    else{
+                        //1-digit, NO '-' sign situation
+                        j++;
+                    }
+                }
+                else if(commandString.at(j)=='-'){
+                    j++;
+                    //'- sign situation'
+                    if(48 <= commandString.at(j+1) && commandString.at(j+1) <= 57){
+                        //2-digit, NO '-' sign situation
+                        j+=2;
+                    }
+                    else{
+                        //1-digit, NO '-' sign situation
+                        j++;
+                    }
+                }
+                else{
+                    badPos = j;
+                    return false;
+                }
+            }
+            else{ //Commands ended with H/V.
+                j++;
+                badPos = j;
+                return false;
+            }
+        }
+        else{ //INVALID command
+            badPos = j;
+            return false;
+        }
+    }
+    return true;
+}
 int performCommands(string commandString, char& plotChar, int& mode, int& badPos){
     int i =0;
+    int c = 1;
+    int r = 1;
     while(i!=commandString.size()){
         //IF BRANCHES:
         //1. 'H' or 'h' [FOLLOWED BY NUMBER or '-' AND NUMBER]
@@ -181,7 +251,8 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
             clearGrid();
             plotChar = '*';
             mode = FG;
-            //SET pos to 1,1 pending
+            c=1;
+            r=1;
             i++;
             continue; //Processing of 'C' is complete
         }
@@ -205,7 +276,7 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
             }
         }
         else if (commandString.at(i) == 'B' || commandString.at(i) == 'b'){
-            if (i!= commandString.size()-1){ //F is followed by a command
+            if (i!= commandString.size()-1){ //B is followed by a command
                 i++; // Proceed to next character
                 if(validChar(commandString.at(i))){ //Able to proceed with program
                     mode =  BG;
@@ -223,58 +294,31 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
                 return 1;
             }
         }
-        
+        else if(commandString.at(i) == 'H' || commandString.at(i) == 'h'){
+            if (i!= commandString.size()-1){ //H is not at the end of commands.
+                i++; // Proceed to next character
+                int digitOne = commandString.at(i)-48; // Char - 48 is the int according to ASCII Table.
+                if(validHorizDistance(c,digitOne)){
+                    plotLine(r, c, digitOne, HORIZ, plotChar, mode); //Plots one char
+                    
+                }
+                else{
+                    
+                }
+            }
+            else{ // command string ends but a character is expected
+                badPos = commandString.size();
+                return 1;
+            }
+        }
     }
     return 0;
 }
 
 int main()
 {
-    for (;;)
-        {
-            cout << "Enter the number of grid rows and columns (max 30 each): ";
-            int nRows;
-            int nCols;
-            cin >> nRows >> nCols;
-            cin.ignore(10000, '\n');
-            if (nRows >= 1  &&  nRows <= MAXROWS  &&  nCols >= 1  &&  nCols <= MAXCOLS)
-            {
-                setSize(nRows, nCols);
-                break;
-            }
-            cout << "The numbers must be between 1 and 30." << endl;
-        }
-        char currentChar = '*';
-        int currentMode = FG;
-        for (;;)
-        {
-            cout << "Enter a command string (empty line to quit): ";
-            string cmd;
-            getline(cin, cmd);
-            if (cmd == "")
-                break;
-            int position;
-            int status = performCommands(cmd, currentChar, currentMode, position);
-            switch (status)
-            {
-              case 0:
-                draw();
-                break;
-              case 1:
-                cout << "Syntax error at position " << position << endl;
-                break;
-              case 2:
-                if (!isprint(currentChar))
-                    cout << "Current character is not printable" << endl;
-                if (currentMode != FG  &&  currentMode != BG)
-                    cout << "Current mode is " << currentMode << ", not FG or BG" << endl;
-                break;
-              case 3:
-                cout << "Cannot perform command at position " << position << endl;
-                break;
-              default:
-                  // It should be impossible to get here.
-                cout << "performCommands returned " << status << "!" << endl;
-            }
-        }
+    int position;
+    char currentChar = '*';
+    int currentMode = FG;
+    cout<<checkCommands("FH8",currentChar,currentMode,position)<<' '<<position<<endl;
 }
