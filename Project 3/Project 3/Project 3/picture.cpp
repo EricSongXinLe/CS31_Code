@@ -166,7 +166,7 @@ bool plotLine(int r, int c, int distance, int dir, char plotChar, int fgbg){
 //-------------------END-----OF----PHASE----TWO----------------//
 
 //-------------------START-----OF----PHASE----THREE----------------//
-bool checkCommands(string commandString, char& plotChar, int& mode, int& badPos){
+bool checkCommands(string commandString, int& badPos){
     int j=0;
     while (j!=commandString.size()){
         if(commandString.at(j) == 'C' || commandString.at(j) == 'c'){
@@ -252,7 +252,7 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
     int r = 1;
     int distance;
     string twoDigits = "";
-    if (!checkCommands(commandString, plotChar, mode, badPos)){
+    if (!checkCommands(commandString, badPos)){
         return 1; //SYNTAX ERROR in COMMANDS
         //Do not need to reassign badPos, because &badPos is linked.
     }
