@@ -250,11 +250,13 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
     int i =0;
     int c = 1;
     int r = 1;
+    int distance;
+    string twoDigits = "";
     if (!checkCommands(commandString, plotChar, mode, badPos)){
         return 1; //SYNTAX ERROR in COMMANDS
         //Do not need to reassign badPos, because &badPos is linked.
     }
-    /*
+    
     while(i!=commandString.size()){
         //IF BRANCHES:
         //1. 'H' or 'h' [FOLLOWED BY NUMBER or '-' AND NUMBER]
@@ -300,33 +302,220 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
             }
         }
         else if(commandString.at(i) == 'H' || commandString.at(i) == 'h'){
-            if (i!= commandString.size()-1){ //H is not at the end of commands.
-                i++; // Proceed to next character
-                int digitOne = commandString.at(i)-48; // Char - 48 is the int according to ASCII Table.
-                if(validHorizDistance(c,digitOne)){
-                    plotLine(r, c, digitOne, HORIZ, plotChar, mode); //Plots one char
-                    
+            i++;//move to next char
+            if(48 <= commandString.at(i) && commandString.at(i) <= 57){ //nextchar is num
+                if(i!=commandString.size()-1){
+                    //not the end yet!
+                    if(48 <= commandString.at(i+1) && commandString.at(i+1) <= 57){
+                        //2-digit, no -sign.
+                        twoDigits = commandString.at(i) + commandString.at(i+1);
+                        distance = stoi(twoDigits);
+                        if(validHorizDistance(c, distance)){
+                            plotLine(r,c,distance,HORIZ,plotChar,mode);
+                            i+=2; //finished plotting line, move 2 characters foward.
+                            c+=distance;
+                        }
+                        else{
+                            badPos = i-2; //OUT of RANGE
+                            return 3;
+                        }
+                    }
+                    else{
+                        //1 digit, no -sign
+                        distance = commandString.at(i) - 48; //Converts back to int if subtracts 48 from char ASCII value
+                        if(validHorizDistance(c, distance)){
+                            plotLine(r,c,distance,HORIZ,plotChar,mode);
+                            i++; //finished plotting line, move 1 characters foward.
+                            c+=distance;
+                            
+                        }
+                        else{
+                            badPos = i-1; //OUT of RANGE
+                            return 3;
+                        }
+                    }
                 }
                 else{
-                    
+                    //LAST NUMBER
+                    distance = commandString.at(i) - 48; //Converts back to int if subtracts 48 from char ASCII value
+                    if(validHorizDistance(c, distance)){
+                        plotLine(r,c,distance,HORIZ,plotChar,mode);
+                        i++; //finished plotting line, move 1 characters foward.
+                        c+=distance;
+                    }
+                    else{
+                        badPos = i-1; //OUT of RANGE
+                        return 3;
+                    }
                 }
             }
+            else{
+                //Must be '-'sign.
+                i++; //Move across - sign
+                if(48 <= commandString.at(i) && commandString.at(i) <= 57){ //nextchar is num
+                    if(i!=commandString.size()-1){
+                        //not the end yet!
+                        if(48 <= commandString.at(i+1) && commandString.at(i+1) <= 57){
+                            //2-digit, no -sign.
+                            twoDigits = commandString.at(i) + commandString.at(i+1);
+                            distance = 0-stoi(twoDigits);
+                            if(validHorizDistance(c, distance)){
+                                plotLine(r,c,distance,HORIZ,plotChar,mode);
+                                i+=2; //finished plotting line, move 2 characters foward.
+                                c+=distance;
+                            }
+                            else{
+                                badPos = i-3; //OUT of RANGE
+                                return 3;
+                            }
+                        }
+                        else{
+                            //1 digit,  -sign
+                            distance = 0-(commandString.at(i) - 48); //Converts back to int if subtracts 48 from char ASCII value
+                            if(validHorizDistance(c, distance)){
+                                plotLine(r,c,distance,HORIZ,plotChar,mode);
+                                i++; //finished plotting line, move 1 characters foward.
+                                c+=distance;
+                            }
+                            else{
+                                badPos = i-2; //OUT of RANGE
+                                return 3;
+                            }
+                        }
+                    }
+                    else{
+                        //LAST NUMBER
+                        distance = 0-(commandString.at(i) - 48); //Converts back to int if subtracts 48 from char ASCII value
+                        if(validHorizDistance(c, distance)){
+                            plotLine(r,c,distance,HORIZ,plotChar,mode);
+                            i++; //finished plotting line, move 1 characters foward.
+                            c+=distance;
+                        }
+                        else{
+                            badPos = i-2; //OUT of RANGE
+                            return 3;
+                        }
+                    }
+                }
+            }
+            
+        }
+        else if(commandString.at(i) == 'V' || commandString.at(i) == 'v'){
+            i++;//move to next char
+            if(48 <= commandString.at(i) && commandString.at(i) <= 57){ //nextchar is num
+                if(i!=commandString.size()-1){
+                    //not the end yet!
+                    if(48 <= commandString.at(i+1) && commandString.at(i+1) <= 57){
+                        //2-digit, no -sign.
+                        twoDigits = commandString.at(i) + commandString.at(i+1);
+                        distance = stoi(twoDigits);
+                        if(validVertDistance(r, distance)){
+                            plotLine(r,c,distance,VERT,plotChar,mode);
+                            i+=2; //finished plotting line, move 2 characters foward.
+                            r+=distance;
+                        }
+                        else{
+                            badPos = i-2; //OUT of RANGE
+                            return 3;
+                        }
+                    }
+                    else{
+                        //1 digit, no -sign
+                        distance = commandString.at(i) - 48; //Converts back to int if subtracts 48 from char ASCII value
+                        if(validVertDistance(r, distance)){
+                            plotLine(r,c,distance,VERT,plotChar,mode);
+                            i++; //finished plotting line, move 1 characters foward.
+                            r+=distance;
+                        }
+                        else{
+                            badPos = i-1; //OUT of RANGE
+                            return 3;
+                        }
+                    }
+                }
+                else{
+                    //LAST DIGIT is NUMBER
+                    distance = commandString.at(i) - 48; //Converts back to int if subtracts 48 from char ASCII value
+                    if(validVertDistance(r, distance)){
+                        plotLine(r,c,distance,VERT,plotChar,mode);
+                        i++; //finished plotting line, move 1 characters foward.
+                        r+=distance;
+                    }
+                    else{
+                        badPos = i-1; //OUT of RANGE
+                        return 3;
+                    }
+                }
+            }
+            else{
+                //Must be '-'sign.
+                i++; //Move across - sign
+                if(48 <= commandString.at(i) && commandString.at(i) <= 57){ //nextchar is num
+                    if(i!=commandString.size()-1){
+                        //not the end yet!
+                        if(48 <= commandString.at(i+1) && commandString.at(i+1) <= 57){
+                            //2-digit, no -sign.
+                            twoDigits = commandString.at(i) + commandString.at(i+1);
+                            distance = 0-stoi(twoDigits);
+                            if(validVertDistance(r, distance)){
+                                plotLine(r,c,distance,VERT,plotChar,mode);
+                                i+=2; //finished plotting line, move 2 characters foward.
+                                r+=distance;
+                            }
+                            else{
+                                badPos = i-3; //OUT of RANGE
+                                return 3;
+                            }
+                        }
+                        else{
+                            //1 digit, no -sign
+                            distance = 0-(commandString.at(i) - 48); //Converts back to int if subtracts 48 from char ASCII value
+                            if(validVertDistance(r, distance)){
+                                plotLine(r,c,distance,VERT,plotChar,mode);
+                                i++; //finished plotting line, move 1 characters foward.
+                                r+=distance;
+                            }
+                            else{
+                                badPos = i-2; //OUT of RANGE
+                                return 3;
+                            }
+                        }
+                    }
+                    else{
+                        //LAST DIGIT is NUMBER
+                        distance = 0-(commandString.at(i) - 48); //Converts back to int if subtracts 48 from char ASCII value
+                        if(validVertDistance(r, distance)){
+                            plotLine(r,c,distance,VERT,plotChar,mode);
+                            i++; //finished plotting line, move 1 characters foward.
+                            r+=distance;
+                        }
+                        else{
+                            badPos = i-2; //OUT of RANGE
+                            return 3;
+                        }
+                    }
+                }
+            }
+            
         }
     }
-     */
     return 0; //GOOD TO DRAW
 }
 
 int main()
-{
-    setSize(12, 15);
-    assert(plotLine(3, 5, 2, HORIZ, '@', FG));
-    for (int c = 5; c <= 7; c++)
-        assert(getChar(3, c) == '@');
-    assert(getChar(3, 8) == ' ');
-    clearGrid();
-    char pc = '%';
-    int m = FG;
-    int bad = 999;
-      // A successful command string should not change bad
-}
+    {
+        setSize(12, 15);
+        assert(plotLine(3, 5, 2, HORIZ, '@', FG));
+        for (int c = 5; c <= 7; c++)
+            assert(getChar(3, c) == '@');
+        assert(getChar(3, 8) == ' ');
+        clearGrid();
+        char pc = '%';
+        int m = FG;
+        int bad = 999;
+          // A successful command string should not change bad
+        assert(performCommands("V2", pc, m, bad) == 0  &&  getChar(3, 1) == '%'  &&  bad == 999);
+        assert(performCommands("V2H2Q2", pc, m, bad) == 1  &&  bad == 4);
+        assert(performCommands("H4V3V-1H-9", pc, m, bad) == 3  &&  bad == 7);
+        cout << "All tests succeeded." << endl;
+    }
