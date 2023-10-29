@@ -291,7 +291,7 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
         else if (commandString.at(i) == 'B' || commandString.at(i) == 'b'){
             i++;
             if(validChar(commandString.at(i))){ //Able to proceed with program
-                mode =  FG;
+                mode =  BG;
                 plotChar = commandString.at(i); //set mode and char
                 i++;
                 //Proceed to next character
@@ -308,7 +308,7 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
                     //not the end yet!
                     if(48 <= commandString.at(i+1) && commandString.at(i+1) <= 57){
                         //2-digit, no -sign.
-                        twoDigits = commandString.at(i) + commandString.at(i+1);
+                        twoDigits = string(1,commandString.at(i)) + commandString.at(i+1);
                         distance = stoi(twoDigits);
                         if(validHorizDistance(c, distance)){
                             plotLine(r,c,distance,HORIZ,plotChar,mode);
@@ -357,7 +357,7 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
                         //not the end yet!
                         if(48 <= commandString.at(i+1) && commandString.at(i+1) <= 57){
                             //2-digit, no -sign.
-                            twoDigits = commandString.at(i) + commandString.at(i+1);
+                            twoDigits = string(1,commandString.at(i)) + commandString.at(i+1);
                             distance = 0-stoi(twoDigits);
                             if(validHorizDistance(c, distance)){
                                 plotLine(r,c,distance,HORIZ,plotChar,mode);
@@ -407,7 +407,7 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
                     //not the end yet!
                     if(48 <= commandString.at(i+1) && commandString.at(i+1) <= 57){
                         //2-digit, no -sign.
-                        twoDigits = commandString.at(i) + commandString.at(i+1);
+                        twoDigits = string(1,commandString.at(i)) + commandString.at(i+1);
                         distance = stoi(twoDigits);
                         if(validVertDistance(r, distance)){
                             plotLine(r,c,distance,VERT,plotChar,mode);
@@ -455,7 +455,7 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
                         //not the end yet!
                         if(48 <= commandString.at(i+1) && commandString.at(i+1) <= 57){
                             //2-digit, no -sign.
-                            twoDigits = commandString.at(i) + commandString.at(i+1);
+                            twoDigits = string(1,commandString.at(i)) + commandString.at(i+1);
                             distance = 0-stoi(twoDigits);
                             if(validVertDistance(r, distance)){
                                 plotLine(r,c,distance,VERT,plotChar,mode);
@@ -504,7 +504,7 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
 
 int main()
     {
-        setSize(12, 15);
+        setSize(30,30);
         assert(plotLine(3, 5, 2, HORIZ, '@', FG));
         for (int c = 5; c <= 7; c++)
             assert(getChar(3, c) == '@');
@@ -516,6 +516,6 @@ int main()
           // A successful command string should not change bad
         assert(performCommands("V2", pc, m, bad) == 0  &&  getChar(3, 1) == '%'  &&  bad == 999);
         assert(performCommands("V2H2Q2", pc, m, bad) == 1  &&  bad == 4);
-        assert(performCommands("H4V3V-1H-9", pc, m, bad) == 3  &&  bad == 7);
+        assert(performCommands("h12V3H-1B@v-3", pc, m, bad) == 3  &&  bad == 7);
         cout << "All tests succeeded." << endl;
     }
