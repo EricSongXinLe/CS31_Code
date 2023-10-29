@@ -179,7 +179,7 @@ bool checkCommands(string commandString, char& plotChar, int& mode, int& badPos)
             }
             else{ //Commands ended with F.
                 badPos = j;
-                return true;
+                return false;
             }
         }
         else if(commandString.at(j) == 'B' || commandString.at(j) == 'b'){
@@ -188,32 +188,44 @@ bool checkCommands(string commandString, char& plotChar, int& mode, int& badPos)
             }
             else{ //Commands ended with B.
                 badPos = j;
-                return true;
+                return false;
             }
         }
         else if(commandString.at(j) == 'H' || commandString.at(j) == 'h' || commandString.at(j) == 'V' || commandString.at(j) == 'v'){
             if(j!= commandString.size()-1){ //H is followed by char
                 j++; //Move to the next next character.
                 if(48 <= commandString.at(j) && commandString.at(j) <= 57){ // 48 equals to '0', 57 equals to '9', ASCII code is continuous.
-                    if(48 <= commandString.at(j+1) && commandString.at(j+1) <= 57){
-                        //2-digit, NO '-' sign situation
-                        j+=2;
+                    if(j!= commandString.size()-1){ //This is not the last character.
+                        if(48 <= commandString.at(j+1) && commandString.at(j+1) <= 57){
+                            //2-digit, NO '-' sign situation
+                            j+=2;
+                        }
+                        else{
+                            //1-digit, NO '-' sign situation
+                            j++;
+                        }
                     }
                     else{
-                        //1-digit, NO '-' sign situation
-                        j++;
+                        //THIS is the last character of the COMMAND.
+                        return true;
                     }
                 }
                 else if(commandString.at(j)=='-'){
                     j++;
                     //'- sign situation'
-                    if(48 <= commandString.at(j+1) && commandString.at(j+1) <= 57){
-                        //2-digit, NO '-' sign situation
-                        j+=2;
+                    if(j!= commandString.size()-1){ //This is not the last character.
+                        if(48 <= commandString.at(j+1) && commandString.at(j+1) <= 57){
+                            //2-digit, '-' sign situation
+                            j+=2;
+                        }
+                        else{
+                            //1-digit, '-' sign situation
+                            j++;
+                        }
                     }
                     else{
-                        //1-digit, NO '-' sign situation
-                        j++;
+                        //This is the last character of the COMMAND.
+                        return true;
                     }
                 }
                 else{
@@ -238,6 +250,11 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
     int i =0;
     int c = 1;
     int r = 1;
+    if (!checkCommands(commandString, plotChar, mode, badPos)){
+        return 1; //SYNTAX ERROR in COMMANDS
+        //Do not need to reassign badPos, because &badPos is linked.
+    }
+    /*
     while(i!=commandString.size()){
         //IF BRANCHES:
         //1. 'H' or 'h' [FOLLOWED BY NUMBER or '-' AND NUMBER]
@@ -257,41 +274,29 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
             continue; //Processing of 'C' is complete
         }
         else if (commandString.at(i) == 'F' || commandString.at(i) == 'f'){
-            if (i!= commandString.size()-1){ //F is followed by a command
-                i++; // Proceed to next character
-                if(validChar(commandString.at(i))){ //Able to proceed with program
-                    mode =  FG;
-                    plotChar = commandString.at(i); //set mode and char
-                    i++;
-                    //Proceed to next character
-                    continue;
-                }
-                else{ //inprintable character
-                    return 2;
-                }
+            i++; // Proceed to next character
+            if(validChar(commandString.at(i))){ //Able to proceed with program
+                mode =  FG;
+                plotChar = commandString.at(i); //set mode and char
+                i++;
+                //Proceed to next character
+                continue;
             }
-            else{ // command string ends but a character is expected
-                badPos = commandString.size();
-                return 1;
+            else{ //inprintable character
+                return 2;
             }
         }
         else if (commandString.at(i) == 'B' || commandString.at(i) == 'b'){
-            if (i!= commandString.size()-1){ //B is followed by a command
-                i++; // Proceed to next character
-                if(validChar(commandString.at(i))){ //Able to proceed with program
-                    mode =  BG;
-                    plotChar = commandString.at(i); //set mode and char
-                    i++;
-                    //Proceed to next character
-                    continue;
-                }
-                else{ //inprintable character
-                    return 2;
-                }
+            i++;
+            if(validChar(commandString.at(i))){ //Able to proceed with program
+                mode =  FG;
+                plotChar = commandString.at(i); //set mode and char
+                i++;
+                //Proceed to next character
+                continue;
             }
-            else{ // command string ends but a character is expected
-                badPos = commandString.size();
-                return 1;
+            else{ //inprintable character
+                return 2;
             }
         }
         else if(commandString.at(i) == 'H' || commandString.at(i) == 'h'){
@@ -306,19 +311,22 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
                     
                 }
             }
-            else{ // command string ends but a character is expected
-                badPos = commandString.size();
-                return 1;
-            }
         }
     }
-    return 0;
+     */
+    return 0; //GOOD TO DRAW
 }
 
 int main()
 {
-    int position;
-    char currentChar = '*';
-    int currentMode = FG;
-    cout<<checkCommands("FH8",currentChar,currentMode,position)<<' '<<position<<endl;
+    setSize(12, 15);
+    assert(plotLine(3, 5, 2, HORIZ, '@', FG));
+    for (int c = 5; c <= 7; c++)
+        assert(getChar(3, c) == '@');
+    assert(getChar(3, 8) == ' ');
+    clearGrid();
+    char pc = '%';
+    int m = FG;
+    int bad = 999;
+      // A successful command string should not change bad
 }
