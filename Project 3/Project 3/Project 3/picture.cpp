@@ -213,7 +213,7 @@ bool checkCommands(string commandString, int& badPos){
                 else if(commandString.at(j)=='-'){
                     j++;
                     //'- sign situation'
-                    if(j!= commandString.size()-1){ //This is not the last character.
+                    if(j!= commandString.size()){ //'-' is not the last character.
                         if(48 <= commandString.at(j+1) && commandString.at(j+1) <= 57){
                             //2-digit, '-' sign situation
                             j+=2;
@@ -224,8 +224,9 @@ bool checkCommands(string commandString, int& badPos){
                         }
                     }
                     else{
-                        //This is the last character of the COMMAND.
-                        return true;
+                        //'-' is the last character of the COMMAND.
+                        badPos = j-2;
+                        return false;
                     }
                 }
                 else{
@@ -234,8 +235,7 @@ bool checkCommands(string commandString, int& badPos){
                 }
             }
             else{ //Commands ended with H/V.
-                j++;
-                badPos = j;
+                badPos = j+1;
                 return false;
             }
         }
