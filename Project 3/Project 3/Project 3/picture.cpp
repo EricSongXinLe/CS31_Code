@@ -316,7 +316,7 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
                             c+=distance;
                         }
                         else{
-                            badPos = i-2; //OUT of RANGE
+                            badPos = i-1; //OUT of RANGE
                             return 3;
                         }
                     }
@@ -365,7 +365,7 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
                                 c+=distance;
                             }
                             else{
-                                badPos = i-3; //OUT of RANGE
+                                badPos = i-2; //OUT of RANGE
                                 return 3;
                             }
                         }
@@ -415,7 +415,7 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
                             r+=distance;
                         }
                         else{
-                            badPos = i-2; //OUT of RANGE
+                            badPos = i-1; //OUT of RANGE
                             return 3;
                         }
                     }
@@ -463,7 +463,7 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
                                 r+=distance;
                             }
                             else{
-                                badPos = i-3; //OUT of RANGE
+                                badPos = i-2; //OUT of RANGE
                                 return 3;
                             }
                         }
@@ -476,7 +476,7 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
                                 r+=distance;
                             }
                             else{
-                                badPos = i-2; //OUT of RANGE
+                                badPos = i-1; //OUT of RANGE
                                 return 3;
                             }
                         }
@@ -490,7 +490,7 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
                             r+=distance;
                         }
                         else{
-                            badPos = i-2; //OUT of RANGE
+                            badPos = i-1; //OUT of RANGE
                             return 3;
                         }
                     }
@@ -503,19 +503,52 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
 }
 
 int main()
+{
+    for (;;)
     {
-        setSize(30,30);
-        assert(plotLine(3, 5, 2, HORIZ, '@', FG));
-        for (int c = 5; c <= 7; c++)
-            assert(getChar(3, c) == '@');
-        assert(getChar(3, 8) == ' ');
-        clearGrid();
-        char pc = '%';
-        int m = FG;
-        int bad = 999;
-          // A successful command string should not change bad
-        assert(performCommands("V2", pc, m, bad) == 0  &&  getChar(3, 1) == '%'  &&  bad == 999);
-        assert(performCommands("V2H2Q2", pc, m, bad) == 1  &&  bad == 4);
-        assert(performCommands("h12V3H-1B@v-3", pc, m, bad) == 3  &&  bad == 7);
-        cout << "All tests succeeded." << endl;
+        cout << "Enter the number of grid rows and columns (max 30 each): ";
+        int nRows;
+        int nCols;
+        cin >> nRows >> nCols;
+        cin.ignore(10000, '\n');
+        if (nRows >= 1  &&  nRows <= MAXROWS  &&  nCols >= 1  &&  nCols <= MAXCOLS)
+        {
+            setSize(nRows, nCols);
+            break;
+        }
+        cout << "The numbers must be between 1 and 30." << endl;
     }
+    char currentChar = '*';
+    int currentMode = FG;
+    for (;;)
+    {
+        cout << "Enter a command string (empty line to quit): ";
+        string cmd;
+        getline(cin, cmd);
+        if (cmd == "")
+            break;
+        int position;
+        int status = performCommands(cmd, currentChar, currentMode, position);
+        switch (status)
+        {
+          case 0:
+            draw();
+            break;
+          case 1:
+            cout << "Syntax error at position " << position << endl;
+            break;
+          case 2:
+            if (!isprint(currentChar))
+                cout << "Current character is not printable" << endl;
+            if (currentMode != FG  &&  currentMode != BG)
+                cout << "Current mode is " << currentMode << ", not FG or BG" << endl;
+            break;
+          case 3:
+            cout << "Cannot perform command at position " << position << endl;
+            break;
+          default:
+              // It should be impossible to get here.
+            cout << "performCommands returned " << status << "!" << endl;
+        }
+    }
+}
