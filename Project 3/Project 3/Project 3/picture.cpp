@@ -476,7 +476,7 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
                                 r+=distance;
                             }
                             else{
-                                badPos = i-1; //OUT of RANGE
+                                badPos = i-2; //OUT of RANGE
                                 return 3;
                             }
                         }
@@ -490,7 +490,7 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
                             r+=distance;
                         }
                         else{
-                            badPos = i-1; //OUT of RANGE
+                            badPos = i-2; //OUT of RANGE
                             return 3;
                         }
                     }
