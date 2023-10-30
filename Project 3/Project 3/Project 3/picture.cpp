@@ -214,9 +214,11 @@ bool checkCommands(string commandString, int& badPos){
                     j++;
                     //'- sign situation'
                     if(j!= commandString.size()){ //'-' is not the last character.
-                        if(48 <= commandString.at(j+1) && commandString.at(j+1) <= 57){
-                            //2-digit, '-' sign situation
-                            j+=2;
+                        if(j!= commandString.size()-1){ //Another character follows after String
+                            if(48 <= commandString.at(j+1) && commandString.at(j+1) <= 57){ //The other character is a number
+                                //2-digit, '-' sign situation
+                                j+=2;
+                            }
                         }
                         else{
                             //1-digit, '-' sign situation
