@@ -175,19 +175,31 @@ bool checkCommands(string commandString, int& badPos){
         }
         else if(commandString.at(j) == 'F' || commandString.at(j) == 'f'){
             if(j!= commandString.size()-1){ //F is followed by char
-                j+=2; //Move to the next next character.
+                if(validChar(commandString.at(j+1))){
+                    j+=2;//Move to the next next character.
+                }
+                else{
+                    badPos = j+1;
+                    return false;
+                }
             }
             else{ //Commands ended with F.
-                badPos = j;
+                badPos = j+1;
                 return false;
             }
         }
         else if(commandString.at(j) == 'B' || commandString.at(j) == 'b'){
             if(j!= commandString.size()-1){ //B is followed by char
-                j+=2; //Move to the next next character.
+                if(validChar(commandString.at(j+1))){
+                    j+=2;//Move to the next next character.
+                }
+                else{
+                    badPos = j+1;
+                    return false;
+                }
             }
             else{ //Commands ended with B.
-                badPos = j;
+                badPos = j+1;
                 return false;
             }
         }
@@ -221,13 +233,19 @@ bool checkCommands(string commandString, int& badPos){
                             }
                         }
                         else{
-                            //1-digit, '-' sign situation
-                            j++;
+                            //ONLY 1 character after '-'
+                            if(48 <= commandString.at(j) && commandString.at(j) <= 57){
+                                j++;
+                            }
+                            else{
+                                badPos = j;
+                                return false;
+                            }
                         }
                     }
                     else{
                         //'-' is the last character of the COMMAND.
-                        badPos = j-2;
+                        badPos = j;
                         return false;
                     }
                 }
@@ -254,6 +272,12 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
     int r = 1;
     int distance;
     string twoDigits = "";
+    if (!validChar(plotChar)){
+        return 2;
+    }
+    if (!validFgbg(mode)){
+        return 2;
+    }
     if (!checkCommands(commandString, badPos)){
         return 1; //SYNTAX ERROR in COMMANDS
         //Do not need to reassign badPos, because &badPos is linked.
