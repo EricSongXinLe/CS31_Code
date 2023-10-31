@@ -226,14 +226,23 @@ bool checkCommands(string commandString, int& badPos){
                     j++;
                     //'- sign situation'
                     if(j!= commandString.size()){ //'-' is not the last character.
-                        if(j!= commandString.size()-1){ //Another character follows after String
-                            if(48 <= commandString.at(j+1) && commandString.at(j+1) <= 57){ //The other character is a number
+                        if(j!= commandString.size()-1){ //Another character follows after H-_ or H-__ command.
+                            if(48 <= commandString.at(j) && commandString.at(j) <= 57 && 48 <= commandString.at(j+1) && commandString.at(j+1) <= 57){ //BOTH digits are number
                                 //2-digit, '-' sign situation
                                 j+=2;
                             }
+                            else{
+                                //ONLY 1 character after '-' - Followed by command situation
+                                if(48 <= commandString.at(j) && commandString.at(j) <= 57){
+                                    j++;
+                                }
+                                else{
+                                    badPos = j;
+                                    return false;
+                                }
+                            }
                         }
                         else{
-                            //ONLY 1 character after '-'
                             if(48 <= commandString.at(j) && commandString.at(j) <= 57){
                                 j++;
                             }
