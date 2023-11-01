@@ -312,29 +312,21 @@ int performCommands(string commandString, char& plotChar, int& mode, int& badPos
         }
         else if (commandString.at(i) == 'F' || commandString.at(i) == 'f'){
             i++; // Proceed to next character
-            if(validChar(commandString.at(i))){ //Able to proceed with program
-                mode =  FG;
-                plotChar = commandString.at(i); //set mode and char
-                i++;
-                //Proceed to next character
-                continue;
-            }
-            else{ //inprintable character
-                return 2;
-            }
+            mode =  FG;
+            plotChar = commandString.at(i); //set mode and char
+            i++;
+            //Proceed to next character
+            continue;
+            
         }
         else if (commandString.at(i) == 'B' || commandString.at(i) == 'b'){
             i++;
-            if(validChar(commandString.at(i))){ //Able to proceed with program
-                mode =  BG;
-                plotChar = commandString.at(i); //set mode and char
-                i++;
-                //Proceed to next character
-                continue;
-            }
-            else{ //inprintable character
-                return 2;
-            }
+            mode =  BG;
+            plotChar = commandString.at(i); //set mode and char
+            i++;
+            //Proceed to next character
+            continue;
+            
         }
         else if(commandString.at(i) == 'H' || commandString.at(i) == 'h'){
             i++;//move to next char
