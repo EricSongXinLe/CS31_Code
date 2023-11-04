@@ -79,6 +79,9 @@ int flip(string a[], int n){
 }
 
 int locateDifference(const string a1[], int n1, const string a2[], int n2){
+    if(n1<0 || n2<0){ //invalid array length
+        return -1;
+    }
     int minOfN = min(n1,n2);
     for (int i =0; i<minOfN;i++){
         if(a1[i] != a2[i]){
