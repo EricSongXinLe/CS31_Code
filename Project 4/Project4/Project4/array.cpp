@@ -50,12 +50,27 @@ int circleLeft(string a[], int n, int pos){
     return pos;
 }
 
-
-
+int enumerateRuns(const string a[], int n){
+    if(n<0){ //invalid array length
+        return -1;
+    }
+    int count = 0;
+    for(int i=0;i<n;i++){
+        if(a[i] != a[i+1]){
+            count++;
+        }
+    }
+    return count;
+}
 
 int main(int argc, const char * argv[]) {
-    string running[5] = { "nikki", "donald", "asa", "tim", "ron" };
-    int m = circleLeft(running, 5, 1);
-    cerr <<m<<endl;
+    string d[9] = {
+        "chris", "doug", "tim", "tim", "vivek", "vivek", "vivek", "tim", "tim"
+    };
+    int p = enumerateRuns(d, 9);
+    for(int i=0; i<9; i++){
+        cout<<d[i]<<endl;
+    }
+    cerr <<p<<endl;
     return 0;
 }
