@@ -114,13 +114,26 @@ int subsequence(const string a1[], int n1, const string a2[], int n2){
     }
     return -1;
 }
+int locateAny(const string a1[], int n1, const string a2[], int n2){
+    if(n1<0 || n2<0){ //invalid array length
+        return -1;
+    }
+    for(int i=0;i<n1;i++){
+        for(int j=0;j<n2;j++){
+            if(a1[i] == a2[j]){
+                return i;
+            }
+        }
+    }
+    return -1;
+}
 
 int main(int argc, const char * argv[]) {
-    string names[10] = { "nikki", "ron", "tim","ron","tim", "vivek", "doug" };
-    string names1[10] = { "ron", "tim", "vivek" };
-    int t = subsequence(names, 7, names1, 3);  // returns 1
-    string names2[10] = { "nikki", "vivek" };
-    int u = subsequence(names, 4, names2, 2);  // returns -1
-    cerr<<t<<endl<<u<<endl;
+    string names[10] = { "nikki", "ron", "tim", "vivek", "doug" };
+    string set1[10] = { "donald", "doug", "vivek", "ron" };
+    int v = locateAny(names, 6, set1, 4);  // returns 1 (a1 has "ron" there)
+    string set2[10] = { "chris", "asa" };
+    int w = locateAny(names, 6, set2, 2);  // returns -1 (a1 has none)
+    cerr<<v<<endl<<w<<endl;
     return 0;
 }
