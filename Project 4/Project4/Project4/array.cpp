@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <cassert>
 using namespace std;
 
 int reduplicate(string a[], int n){
@@ -69,7 +70,7 @@ int flip(string a[], int n){
     }
     string tmp;
     int pointer = n-1;
-    for(int i=0;i<n;i++){
+    for(int i=0;i<n/2;i++){
         tmp = a[i];
         a[i] = a[pointer];
         a[pointer] = tmp;
@@ -119,7 +120,7 @@ int locateAny(const string a1[], int n1, const string a2[], int n2){
         return -1;
     }
     for(int i=0;i<n1;i++){
-        for(int j=0;j<n2;j++){
+        for(int j=0;j<n2;j++){ //for each element in a1, iterate a2 to find any matching elements.
             if(a1[i] == a2[j]){
                 return i;
             }
@@ -128,12 +129,17 @@ int locateAny(const string a1[], int n1, const string a2[], int n2){
     return -1;
 }
 
+int divide(string a[], int n, string divider){
+    if(n<0){ //invalid array length
+        return -1;
+    }
+    string tmp;
+    for(int i=0;i<n;i++){
+     //
+    }
+}
+
 int main(int argc, const char * argv[]) {
-    string names[10] = { "nikki", "ron", "tim", "vivek", "doug" };
-    string set1[10] = { "donald", "doug", "vivek", "ron" };
-    int v = locateAny(names, 6, set1, 4);  // returns 1 (a1 has "ron" there)
-    string set2[10] = { "chris", "asa" };
-    int w = locateAny(names, 6, set2, 2);  // returns -1 (a1 has none)
-    cerr<<v<<endl<<w<<endl;
+    
     return 0;
 }
