@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 using namespace std;
+
 int reduplicate(string a[], int n){
     if(n<0){ //invalid array length
         return -1;
@@ -10,6 +11,7 @@ int reduplicate(string a[], int n){
     }
     return n;
 }
+
 int locate(const string a[], int n, string target){
     if(n<0){ //invalid array length
         return -1;
@@ -21,12 +23,24 @@ int locate(const string a[], int n, string target){
     }
     return -1;
 }
-int main(int argc, const char * argv[]) {
-    string stuff[6] = { "mahi", "bon", "cous", "", "tar", "mur" };
-    int i = reduplicate(stuff, 6);
-    for (int i =0; i<6;i++){
-        cerr<<stuff[i]<<endl;
+
+int locationOfMax(const string a[], int n){
+    if(n<0){ //invalid array length
+        return -1;
     }
-    cerr <<i<<endl;
+    int maxIndex = 0; //default max index is 0
+    for(int i=0; i<n;i++){
+        if(a[i]>=a[maxIndex]){
+            maxIndex = i; //updates index
+        }
+    }
+    return maxIndex; //What should I do if empty array is passed? return 0 or -1?
+}
+
+
+int main(int argc, const char * argv[]) {
+    string cand[6] = {};
+    int k = locationOfMax(cand, 0);
+    cerr <<k<<endl;
     return 0;
 }
