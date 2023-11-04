@@ -62,15 +62,27 @@ int enumerateRuns(const string a[], int n){
     }
     return count;
 }
+int flip(string a[], int n){
+    if(n<0){ //invalid array length
+        return -1;
+    }
+    string tmp;
+    int pointer = n-1;
+    for(int i=0;i<n;i++){
+        tmp = a[i];
+        a[i] = a[pointer];
+        a[pointer] = tmp;
+        pointer--;
+    }
+    return n;
+}
 
 int main(int argc, const char * argv[]) {
-    string d[9] = {
-        "chris", "doug", "tim", "tim", "vivek", "vivek", "vivek", "tim", "tim"
-    };
-    int p = enumerateRuns(d, 9);
-    for(int i=0; i<9; i++){
-        cout<<d[i]<<endl;
+    string folks[6] = { "donald", "tim", "", "chris", "nikki", "donald" };
+    int q = flip(folks, 4);
+    for(int i=0; i<6; i++){
+        cout<<folks[i]<<endl;
     }
-    cerr <<p<<endl;
+    cerr <<q<<endl;
     return 0;
 }
