@@ -73,7 +73,7 @@ int flip(string a[], int n){
         tmp = a[i];
         a[i] = a[pointer];
         a[pointer] = tmp;
-        pointer--;
+        pointer--; //Traverse back
     }
     return n;
 }
@@ -82,7 +82,7 @@ int locateDifference(const string a1[], int n1, const string a2[], int n2){
     if(n1<0 || n2<0){ //invalid array length
         return -1;
     }
-    int minOfN = min(n1,n2);
+    int minOfN = min(n1,n2); //only loops the shorter length of the array
     for (int i =0; i<minOfN;i++){
         if(a1[i] != a2[i]){
             return i;
@@ -91,11 +91,36 @@ int locateDifference(const string a1[], int n1, const string a2[], int n2){
     return minOfN;
 }
 
+int subsequence(const string a1[], int n1, const string a2[], int n2){
+    if(n1<0 || n2<0){ //invalid array length
+        return -1;
+    }
+    int j = 0;
+    for(int i=0; i<n1;i++){ //loops through the whole a1 array
+        if(a1[i] == a2[j]){ //matching start
+            j++;
+        }
+        else{ //no more overlap
+            if(j==n2){ //all elements in a2 have been looped, complete match
+                return i-n2;
+            }
+            else{ //incomplete match
+                j=0; //resets j index
+                if(a1[i] == a2[j]){ //matching start
+                    j++;
+                }
+            }
+        }
+    }
+    return -1;
+}
+
 int main(int argc, const char * argv[]) {
-    string folks[6] = { "donald", "tim", "", "chris", "nikki", "donald" };
-    string group[5] = { "donald", "tim", "donald", "", "chris" };
-    int r = locateDifference(folks, 6, group, 5);  //  returns 2
-    int s = locateDifference(folks, 2, group, 1);  //  returns 1
-    cerr<<r<<endl<<s<<endl;
+    string names[10] = { "nikki", "ron", "tim","ron","tim", "vivek", "doug" };
+    string names1[10] = { "ron", "tim", "vivek" };
+    int t = subsequence(names, 7, names1, 3);  // returns 1
+    string names2[10] = { "nikki", "vivek" };
+    int u = subsequence(names, 4, names2, 2);  // returns -1
+    cerr<<t<<endl<<u<<endl;
     return 0;
 }
