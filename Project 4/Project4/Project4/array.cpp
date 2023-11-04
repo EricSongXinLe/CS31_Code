@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <cmath>
 using namespace std;
 
 int reduplicate(string a[], int n){
@@ -77,12 +78,21 @@ int flip(string a[], int n){
     return n;
 }
 
+int locateDifference(const string a1[], int n1, const string a2[], int n2){
+    int minOfN = min(n1,n2);
+    for (int i =0; i<minOfN;i++){
+        if(a1[i] != a2[i]){
+            return i;
+        }
+    }
+    return minOfN;
+}
+
 int main(int argc, const char * argv[]) {
     string folks[6] = { "donald", "tim", "", "chris", "nikki", "donald" };
-    int q = flip(folks, 4);
-    for(int i=0; i<6; i++){
-        cout<<folks[i]<<endl;
-    }
-    cerr <<q<<endl;
+    string group[5] = { "donald", "tim", "donald", "", "chris" };
+    int r = locateDifference(folks, 6, group, 5);  //  returns 2
+    int s = locateDifference(folks, 2, group, 1);  //  returns 1
+    cerr<<r<<endl<<s<<endl;
     return 0;
 }
