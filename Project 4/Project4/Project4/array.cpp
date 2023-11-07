@@ -27,7 +27,7 @@ int locate(const string a[], int n, string target){
 }
 
 int locationOfMax(const string a[], int n){
-    if(n<0){ //invalid array length
+    if(n<=0){ //invalid array length
         return -1;
     }
     int maxIndex = 0; //default max index is 0
@@ -40,7 +40,7 @@ int locationOfMax(const string a[], int n){
 }
 
 int circleLeft(string a[], int n, int pos){
-    if(n<0){ //invalid array length
+    if(n<0 || n < pos+1){ //invalid array length
         return -1;
     }
     
@@ -96,6 +96,9 @@ int subsequence(const string a1[], int n1, const string a2[], int n2){
     if(n1<0 || n2<0){ //invalid array length
         return -1;
     }
+    else if(n2 == 0){
+        return 0; //a sequence of 0 elements to be a subsequence of any sequence at pos 0
+    }
     int j = 0;
     for(int i=0; i<n1;i++){ //loops through the whole a1 array
         if(a1[i] == a2[j]){ //matching start
@@ -135,11 +138,12 @@ int divide(string a[], int n, string divider){
     }
     string tmp;
     for(int i=0;i<n;i++){
-     //
+        //
     }
 }
 
 int main(int argc, const char * argv[]) {
-    
+    const int ARI = 6;
+    string stuff[ARI] = { "CS", "31", "Test", "", "Cases", "." };
     return 0;
 }
