@@ -137,13 +137,26 @@ int divide(string a[], int n, string divider){
         return -1;
     }
     string tmp;
-    for(int i=0;i<n;i++){
-        //
+    //bubble sort the array
+    for(int i=0;i<n-1;i++){
+        for(int j=0; j<n-i-1;j++){
+            if(a[j]>a[j+1]){ //if current element is greater than next element
+                tmp = a[j];
+                a[j] = a[j+1];
+                a[j+1] = tmp; //swap two elements
+            }
+        }
     }
+    for(int i=0;i<n;i++){
+        if( a[i] >= divider){ //found first element that is greater than or equal to divder
+            return i;
+        }
+    }
+    return n;
 }
 
 int main(int argc, const char * argv[]) {
-    const int ARI = 6;
-    string stuff[ARI] = { "CS", "31", "Test", "", "Cases", "." };
+    string h[7] = { "nikki", "ron", "asa", "vivek", "", "chris", "donald" };
+    assert(divide(h, 7, "donald") == 3);
     return 0;
 }
