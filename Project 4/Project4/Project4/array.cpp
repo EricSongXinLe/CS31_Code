@@ -155,8 +155,31 @@ int divide(string a[], int n, string divider){
     return n;
 }
 
-int main(int argc, const char * argv[]) {
+int main() {
     string h[7] = { "nikki", "ron", "asa", "vivek", "", "chris", "donald" };
+    assert(locate(h, 7, "chris") == 5);
+    assert(locate(h, 7, "asa") == 2);
+    assert(locate(h, 2, "asa") == -1);
+    assert(locationOfMax(h, 7) == 3);
+
+    string g[4] = { "nikki", "ron", "chris", "tim" };
+    assert(locateDifference(h, 4, g, 4) == 2);
+    assert(circleLeft(g, 4, 1) == 1 && g[1] == "chris" && g[3] == "ron");
+
+    string c[4] = { "ma", "can", "tu", "do" };
+    assert(reduplicate(c, 4) == 4 && c[0] == "mama" && c[3] == "dodo");
+
+    string e[4] = { "asa", "vivek", "", "chris" };
+    assert(subsequence(h, 7, e, 4) == 2);
+
+    string d[5] = { "ron", "ron", "ron", "chris", "chris" };
+    assert(enumerateRuns(d, 5) == 2);
+
+    string f[3] = { "vivek", "asa", "tim" };
+    assert(locateAny(h, 7, f, 3) == 2);
+    assert(flip(f, 3) == 3 && f[0] == "tim" && f[2] == "vivek");
+
     assert(divide(h, 7, "donald") == 3);
-    return 0;
+
+    cout << "All tests succeeded" << endl;
 }
