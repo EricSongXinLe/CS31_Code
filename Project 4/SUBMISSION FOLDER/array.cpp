@@ -56,6 +56,9 @@ int enumerateRuns(const string a[], int n){
     if(n<0){ //invalid array length
         return -1;
     }
+    if(n == 0){
+        return 0;
+    }
     int count = 1;
     for(int i=0;i<n;i++){
         if(i+1<n && a[i] != a[i+1]){
