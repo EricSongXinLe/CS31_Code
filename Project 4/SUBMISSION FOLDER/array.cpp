@@ -32,7 +32,7 @@ int locationOfMax(const string a[], int n){
     }
     int maxIndex = 0; //default max index is 0
     for(int i=0; i<n;i++){
-        if(a[i]>=a[maxIndex]){
+        if(a[i]>a[maxIndex]){
             maxIndex = i; //updates index
         }
     }
@@ -40,12 +40,12 @@ int locationOfMax(const string a[], int n){
 }
 
 int circleLeft(string a[], int n, int pos){
-    if(n<0 || n < pos+1){ //invalid array length
+    if(n<=0 || n < pos+1 || pos < 0){ //invalid array length
         return -1;
     }
     
     string tmp = a[pos]; //copy the position of item that will be eliminated
-    for(int i=pos;i<n;i++){ //start with item that will be eliminated.
+    for(int i=pos;i<n-1;i++){ //start with item that will be eliminated.
         a[i] = a[i+1]; //Move each item forward
     }
     a[n-1]=tmp; //put eliminated item into the last index of the arr.
@@ -56,9 +56,9 @@ int enumerateRuns(const string a[], int n){
     if(n<0){ //invalid array length
         return -1;
     }
-    int count = 0;
+    int count = 1;
     for(int i=0;i<n;i++){
-        if(a[i] != a[i+1]){
+        if(i+1<n && a[i] != a[i+1]){
             count++;
         }
     }
@@ -69,11 +69,11 @@ int flip(string a[], int n){
         return -1;
     }
     string tmp;
-    int pointer = n-1;
+    int pointer = n-1; //points to the other side of the array
     for(int i=0;i<n/2;i++){
         tmp = a[i];
         a[i] = a[pointer];
-        a[pointer] = tmp;
+        a[pointer] = tmp; //swap the two numbers
         pointer--; //Traverse back
     }
     return n;
@@ -93,7 +93,7 @@ int locateDifference(const string a1[], int n1, const string a2[], int n2){
 }
 
 int subsequence(const string a1[], int n1, const string a2[], int n2){
-    if(n1<0 || n2<0){ //invalid array length
+    if(n1<0 || n2<0 || n2 > n1){ //invalid array length
         return -1;
     }
     else if(n2 == 0){
@@ -106,7 +106,7 @@ int subsequence(const string a1[], int n1, const string a2[], int n2){
         }
         else{ //no more overlap
             if(j==n2){ //all elements in a2 have been looped, complete match
-                return i-n2;
+                return i-n2+1;
             }
             else{ //incomplete match
                 j=0; //resets j index
@@ -114,6 +114,9 @@ int subsequence(const string a1[], int n1, const string a2[], int n2){
                     j++;
                 }
             }
+        }
+        if(j==n2){ //all elements in a2 AND a1 have been looped, complete match
+            return i-n2+1;
         }
     }
     return -1;
