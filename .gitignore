@@ -3,6 +3,7 @@ Project1/.DS_Store
 .DS_Store
 .DS_Store
 .DS_Store
+Project5/Project 5/DerivedData
 Project5/Project 5/DerivedData/ModuleCache.noindex/Session.modulevalidation
 Project5/Project 5/DerivedData/Project 5/Build/Intermediates.noindex/Project 5.build/Debug/Project 5.build/all-product-headers.yaml
 Project5/Project 5/DerivedData/Project 5/Build/Intermediates.noindex/Project 5.build/Debug/Project 5.build/DerivedSources/Entitlements.plist
@@ -865,3 +866,4 @@ Project5/Project 5/DerivedData/SDKStatCaches.noindex/macosx14.0-23A334-4a76ee93e
 Project5/Project 5/DerivedData/Project 5/SymbolCache/project.plist
 Project5/Project 5/DerivedData/Project 5/SymbolCache/popularity.plist
 Project5/Project 5/DerivedData/Project 5/SymbolCache/metadata.plist
+*.plist
