@@ -547,35 +547,5 @@ int main()
     }
     char currentChar = '*';
     int currentMode = FG;
-    for (;;)
-    {
-        cout << "Enter a command string (empty line to quit): ";
-        string cmd;
-        getline(cin, cmd);
-        if (cmd == "")
-            break;
-        int position;
-        int status = performCommands(cmd, currentChar, currentMode, position);
-        switch (status)
-        {
-          case 0:
-            draw();
-            break;
-          case 1:
-            cout << "Syntax error at position " << position << endl;
-            break;
-          case 2:
-            if (!isprint(currentChar))
-                cout << "Current character is not printable" << endl;
-            if (currentMode != FG  &&  currentMode != BG)
-                cout << "Current mode is " << currentMode << ", not FG or BG" << endl;
-            break;
-          case 3:
-            cout << "Cannot perform command at position " << position << endl;
-            break;
-          default:
-              // It should be impossible to get here.
-            cout << "performCommands returned " << status << "!" << endl;
-        }
-    }
+    plotLine(1, 22, -1, HORIZ, '*', FG);
 }

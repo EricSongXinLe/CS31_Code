@@ -42,7 +42,8 @@ bool readFile(string dir){
     }
 }
 int main() {
-    ifstream infile("/Users/eric/Desktop/UCLA/2023-24/Q1/COM SCI 31/Code/Project5/results.txt");
+    cout<<writeFile("results.txt")<<endl;
+    ifstream infile("results.txt");
     if ( ! infile )
     {
         cerr << "Error: Cannot open data.txt!" << endl;

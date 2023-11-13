@@ -1,5 +1,0 @@
-This will be written to the file
-2 + 2 = 4
-hihi
-123123
-j
