@@ -60,28 +60,29 @@ bool getNextToken(istream& inf, char token[]){
     token[tokenIndex] = '\0'; //reached EOF. Write \0 to cstring
     return false; //can't get next char! reached EoF!
 }
+
+void outputToken(int& counter, ostream& outf, char token[]){
+    if(counter != 0){
+        if(token[0] != '\0'){
+            outf<<' ';
+            counter++;
+        }
+    }
+    outf<<token;
+    counter+=strlen(token);
+}
+
 void processToken(int& counter, int lineLength, ostream& outf, char token[]){
     if(lineLength >= counter + strlen(token)+1){
-        if(counter != 0){
-            if(token[0] != '\0'){
-                outf<<' ';
-                counter++;
-            }
-        }
-        outf<<token;
-        counter+=strlen(token);
+        outputToken(counter, outf, token);
     }
     else{
         outf<<'\n';
         counter = 0;
-        if(counter != 0){
-            outf<<' ';
-            counter++;
-        }
-        outf<<token;
-        counter += strlen(token);
+        outputToken(counter, outf, token);
     }
 }
+
 int render(int lineLength, istream& inf, ostream& outf){
     if(lineLength < 1){
         return 2;
