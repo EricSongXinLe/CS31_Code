@@ -1,7 +1,8 @@
 #include <iostream>
 #include <fstream>
+#include <cctype>
 using namespace std;
-const int MAX = 100;
+const int MAX = 180;
 /* ---------------------PHASE ONE START*/
 bool writeFile(string dir){
     ofstream outfile(dir);
@@ -41,19 +42,79 @@ bool readFile(string dir){
         return true;
     }
 }
-int main() {
-    cout<<writeFile("results.txt")<<endl;
-    ifstream infile("results.txt");
-    if ( ! infile )
-    {
-        cerr << "Error: Cannot open data.txt!" << endl;
-        return 1;
-    }
-    int fileLines = countLines(infile);  // reads from the file data.txt
-    cout << "data.txt has " << fileLines << " lines." << endl;
-    cout << "Type lines, then ctrl-Z (Windows) or ctrl-D (macOS/Linux):" << endl;
-    int keyboardLines = countLines(cin); // reads from keyboard
-    cout << "You typed " << keyboardLines << " lines." << endl;
-    return 0;
-}
 /* ---------------------PHASE ONE END*/
+/* ---------------------PHASE TWO START*/
+bool getNextToken(istream& inf, char token[]){
+    char c;
+    int tokenIndex= 0;
+    while ( inf.get(c) ){ //not at the end of file
+        if(isspace(c)){ //end of word
+            token[tokenIndex] = '\0'; //Reached the end of word
+            return true;
+        }
+        else{
+            token[tokenIndex] = c; //writes char to token
+            tokenIndex++;
+        }
+    }
+    token[tokenIndex] = '\0'; //reached EOF. Write \0 to cstring
+    return false; //can't get next char! reached EoF!
+}
+int render(int lineLength, istream& inf, ostream& outf){
+    if(lineLength < 1){
+        return 2;
+    }
+    else{
+        int counter = 0;
+        char token[MAX];
+        while(getNextToken(inf,token)){
+            if(lineLength >= counter + strlen(token)+1){
+                if(counter != 0){
+                    if(token[0] != '\0'){
+                        outf<<' ';
+                        counter++;
+                    }
+                }
+                outf<<token;
+                counter+=strlen(token);
+            }
+            else{
+                outf<<'\n';
+                counter = 0;
+                if(counter != 0){
+                    outf<<' ';
+                    counter++;
+                }
+                outf<<token;
+                counter += strlen(token);
+            }
+        }
+        if(lineLength >= counter + strlen(token)+1){
+            if(counter != 0){
+                if(token[0] != '\0'){
+                    outf<<' ';
+                    counter++;
+                }
+            }
+            outf<<token;
+            counter+=strlen(token);
+        }
+        else{
+            outf<<'\n';
+            counter = 0;
+            if(counter != 0){
+                outf<<' ';
+                counter++;
+            }
+            outf<<token;
+            counter += strlen(token);
+        }
+        return 0;
+    }
+}
+
+int main() {
+    ifstream infile("input.txt");
+    ofstream outfile("result.txt");
+    return render(40,infile,outfile);
+}
