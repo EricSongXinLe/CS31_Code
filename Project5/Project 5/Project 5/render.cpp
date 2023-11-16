@@ -61,29 +61,39 @@ bool getNextToken(istream& inf, char token[]){
     return false; //can't get next char! reached EoF!
 }
 
-void outputToken(int& counter, ostream& outf, char token[]){
+void outputToken(bool& doubleSpace, int& counter, ostream& outf, char token[]){
     if(counter != 0){
+        if(doubleSpace == true){
+            outf<<' ';
+            counter++;
+            doubleSpace = false;
+        }
         if(token[0] != '\0'){
             outf<<' ';
             counter++;
         }
+        if(token[strlen(token)-1] == '.' || token[strlen(token)-1] == '?' || token[strlen(token)-1] == '!' || token[strlen(token)-1] == ':'){
+           doubleSpace = true;
+       }
+        
     }
     outf<<token;
     counter+=strlen(token);
 }
 
-void processToken(int& counter, int lineLength, ostream& outf, char token[]){
+void processToken(bool& doubleSpace, int& counter, int lineLength, ostream& outf, char token[]){
     if(lineLength >= counter + strlen(token)+1){
-        outputToken(counter, outf, token);
+        outputToken(doubleSpace, counter, outf, token);
     }
     else{
         outf<<'\n';
         counter = 0;
-        outputToken(counter, outf, token);
+        outputToken(doubleSpace, counter, outf, token);
     }
 }
 
 int render(int lineLength, istream& inf, ostream& outf){
+    bool doubleSpace = false;
     if(lineLength < 1){
         return 2;
     }
@@ -91,9 +101,9 @@ int render(int lineLength, istream& inf, ostream& outf){
         int counter = 0;
         char token[MAX];
         while(getNextToken(inf,token)){
-            processToken(counter, lineLength,outf,token);
+            processToken(doubleSpace, counter, lineLength,outf,token);
         }
-        processToken(counter, lineLength,outf,token);
+        processToken(doubleSpace, counter, lineLength,outf,token);
         return 0;
     }
 }
