@@ -44,12 +44,20 @@ bool readFile(string dir){
 }
 /* ---------------------PHASE ONE END*/
 /* ---------------------PHASE TWO START*/
-bool getNextToken(istream& inf, char token[]){
+bool getNextToken(int& tokenType, istream& inf, char token[]){
     char c;
     int tokenIndex= 0;
     while ( inf.get(c) ){ //not at the end of file
         if(isspace(c)){ //end of word
             token[tokenIndex] = '\0'; //Reached the end of word
+            tokenType = 1;
+            return true;
+        }
+        else if(c == '-'){
+            token[tokenIndex] = c;
+            tokenType = 2;
+            tokenIndex++;
+            token[tokenIndex] = '\0';
             return true;
         }
         else{
@@ -58,10 +66,11 @@ bool getNextToken(istream& inf, char token[]){
         }
     }
     token[tokenIndex] = '\0'; //reached EOF. Write \0 to cstring
+    tokenType = 0;
     return false; //can't get next char! reached EoF!
 }
 
-void outputToken(int& countEmptyParagraph,bool& doubleSpace, int& counter, ostream& outf, char token[]){
+void outputToken(int& prevTokenType, int& tokenType, int& countEmptyParagraph,bool& doubleSpace, int& counter, ostream& outf, char token[]){
     if(token[0] == '@' && token[1] == 'P' && token[2] == '@' && strlen(token)==3){ //IF and ONLY IF token is 3 chars long, and only consists of @P@
         if(countEmptyParagraph == 0){ //no empty paragraphs have been produced.
             outf<<'\n'<<'\n'; //Output a blank new line and start off a new line
@@ -82,7 +91,7 @@ void outputToken(int& countEmptyParagraph,bool& doubleSpace, int& counter, ostre
         counter++; //increment counter by 1 since one ADDITIONAL Space is produced.
         doubleSpace = false;
     }
-    if(counter != 0){ //Not first word
+    if(counter != 0 && prevTokenType == 1){ //Not first word
         if(token[0] != '\0'){
             outf<<' '; //usual space before word.
             counter++;
@@ -94,16 +103,24 @@ void outputToken(int& countEmptyParagraph,bool& doubleSpace, int& counter, ostre
     //ABOVE IS ALL Pre-processing before outputting the token
     outf<<token;
     counter+=strlen(token);
+    prevTokenType = tokenType;
 }
 
-void processToken(int& countEmptyParagraph, bool& doubleSpace, int& counter, int lineLength, ostream& outf, char token[]){
-    if(lineLength >= counter + strlen(token)+1){ //This line hasn't finished yet, and can fit additional token & one space.
-        outputToken(countEmptyParagraph, doubleSpace, counter, outf, token);
+void processToken(int& prevTokenType, int& tokenType, int& countEmptyParagraph, bool& doubleSpace, int& counter, int lineLength, ostream& outf, char token[]){
+    int space;
+    if(prevTokenType==1){ //if token is a regular word
+        space = 1; //should include a space before next token
+    }
+    else{//if token has '-'
+        space = 0;//should NOT include a space before next token
+    }
+    if(lineLength >= counter + strlen(token)+space){ //This line hasn't finished yet, and can fit additional token & optional space.
+        outputToken(prevTokenType, tokenType, countEmptyParagraph, doubleSpace, counter, outf, token);
     }
     else{
         outf<<'\n';
         counter = 0;
-        outputToken(countEmptyParagraph, doubleSpace, counter, outf, token);
+        outputToken(prevTokenType, tokenType, countEmptyParagraph, doubleSpace, counter, outf, token);
     }
 }
 
@@ -116,10 +133,12 @@ int render(int lineLength, istream& inf, ostream& outf){
     else{
         int counter = 0;
         char token[MAX];
-        while(getNextToken(inf,token)){
-            processToken(countEmptyParagraph, doubleSpace, counter, lineLength,outf,token);
+        int tokenType;
+        int prevTokenType=0;
+        while(getNextToken(tokenType, inf,token)){
+            processToken(prevTokenType, tokenType, countEmptyParagraph, doubleSpace, counter, lineLength,outf,token);
         }
-        processToken(countEmptyParagraph, doubleSpace, counter, lineLength,outf,token);
+        processToken(prevTokenType, tokenType, countEmptyParagraph, doubleSpace, counter, lineLength,outf,token);
         return 0;
     }
 }
