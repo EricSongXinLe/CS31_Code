@@ -72,9 +72,14 @@ bool getNextToken(int& tokenType, istream& inf, char token[]){
 
 void outputToken(int& prevTokenType, int& tokenType, int& countEmptyParagraph,bool& doubleSpace, int& counter, ostream& outf, char token[]){
     if(token[0] == '@' && token[1] == 'P' && token[2] == '@' && strlen(token)==3){ //IF and ONLY IF token is 3 chars long, and only consists of @P@
-        if(countEmptyParagraph == 0){ //no empty paragraphs have been produced.
+        if(countEmptyParagraph == 0 && prevTokenType != 2){ //no empty paragraphs have been produced.
             outf<<'\n'<<'\n'; //Output a blank new line and start off a new line
             countEmptyParagraph++;
+        }
+        else if(countEmptyParagraph == 0 && prevTokenType == 2){ //Basically "@P@-a-@P@" situation
+            outf<<token; //Just output @P@, don't output
+            counter+=strlen(token);
+            prevTokenType = 1; //this token is recognized as a regular word.
         }
         else{
             counter = 0; //
