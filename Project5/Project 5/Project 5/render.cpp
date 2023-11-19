@@ -78,7 +78,7 @@ void outputToken(int& prevTokenType, int& tokenType, int& countEmptyParagraph,bo
             countEmptyParagraph++;
         }
         else if(countEmptyParagraph == 0 && prevTokenType == 2){ //Basically "@P@-a-@P@" situation
-            outf<<token; //Just output @P@, don't output
+            outf<<token; //Just output the token, don't output empty paragraphs
             counter+=strlen(token);
             prevTokenType = 1; //this token is recognized as a regular word.
         }
@@ -92,10 +92,13 @@ void outputToken(int& prevTokenType, int& tokenType, int& countEmptyParagraph,bo
         doubleSpace = false; //this prevents when running the outputToken the next time, additional spaces are produced.
         return; //By returning, this breaks of the void outputToken function, to avoid to token '@''P''@' from being written to file.
     }
-    if(doubleSpace == true and counter != 0){ //Do not output ' ' if ' 'will be first character
+    if((doubleSpace == true and counter != 0) and (not (token[0] == '\0'))){ //Do not output ' ' if ' 'will be first character
         outf<<' '; //ADDITIONAL SPACE.
         counter++; //increment counter by 1 since one ADDITIONAL Space is produced.
         doubleSpace = false;
+    }
+    else if(doubleSpace == true and counter == 0){
+        doubleSpace = false; //prev Double space resets.
     }
     if(counter != 0 && prevTokenType == 1){ //Not first word
         if(token[0] != '\0'){
@@ -114,16 +117,17 @@ void outputToken(int& prevTokenType, int& tokenType, int& countEmptyParagraph,bo
 
 void processToken(bool& returnOne, int& prevTokenType, int& tokenType, int& countEmptyParagraph, bool& doubleSpace, int& counter, int lineLength, ostream& outf, char token[]){
     int space;
-    if(prevTokenType==1){ //if token is a regular word
+    if(prevTokenType==1 and token[0]!='\0' and counter != 0){ //if token is a regular word, and is not an empty token
         space = 1; //should include a space before next token
     }
-    else{//if token has '-'
+    else{//if token has '-', or is empty token
         space = 0;//should NOT include a space before next token
     }
     if(lineLength >= counter + strlen(token)+space){ //This line hasn't finished yet, and can fit additional token & optional space.
         outputToken(prevTokenType, tokenType, countEmptyParagraph, doubleSpace, counter, outf, token);
     }
-    else if (lineLength < strlen(token)){ //special case where word
+    else if (lineLength < strlen(token)){
+        //special case where word
         if(! (prevTokenType==-1)){ // Type -1 means this is the first token every written, therefore do not need to output a new line.
             outf<<'\n';
         }
@@ -138,6 +142,7 @@ void processToken(bool& returnOne, int& prevTokenType, int& tokenType, int& coun
             charsWritten+=lineLength;
             outf<<'\n'; //Go to next line
         }
+        counter = 0;
         for(int i = charsWritten; i<strlen(token);i++){ //The chars can be fitted into one line.
             outf<<token[i];
             counter++; //increment counter accordingly so other normal characters can be fitted into this line.
@@ -145,8 +150,10 @@ void processToken(bool& returnOne, int& prevTokenType, int& tokenType, int& coun
         prevTokenType = 1; //Type 1 means a space is needed.
     }
     else{
-        outf<<'\n'; //new line is needed.
-        counter = 0; //reset counter.
+        if(not(token[0] == '@' && token[1] == 'P' && token[2] == '@' && strlen(token)==3)){ //IF THE token already makes a new line
+            outf<<'\n'; //new line is needed.
+            counter = 0; //reset counter.
+        }
         outputToken(prevTokenType, tokenType, countEmptyParagraph, doubleSpace, counter, outf, token);
     }
 }
@@ -175,7 +182,7 @@ int render(int lineLength, istream& inf, ostream& outf){
 }
 
 int main() {
-    ifstream infile("input.txt");
+    ifstream infile("input3.txt");
     ofstream outfile("result.txt");
-    return render(4,infile,outfile);
+    return render(40,infile,outfile);
 }
