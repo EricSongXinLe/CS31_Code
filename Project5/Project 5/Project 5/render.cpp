@@ -2,48 +2,11 @@
 #include <fstream>
 #include <cctype>
 #include <cstring>
+#include <sstream>
+#include <streambuf>
+#include <cassert>
 using namespace std;
 const int MAX = 180;
-/* ---------------------PHASE ONE START*/
-bool writeFile(string dir){
-    ofstream outfile(dir);
-    if ( ! outfile ){
-        cerr << "Error: Cannot write out file!" << endl;
-        return false; //failed to write file
-    }
-    else{
-        outfile << "This will be written to the file" << endl;
-        outfile << "2 + 2 = " << 2+2 << endl; //writes file
-        return true;
-    }
-}
-void greet(ostream& outf)    // outf is a name of our choosing
-    {
-        outf << "Hello" << endl;
-    }
-
-int countLines(istream& inf)   // inf is a name of our choosing
-    {
-        int lineCount = 0;
-        string line;
-        while (getline(inf, line))
-            lineCount++;
-        return lineCount;
-    }
-
-bool readFile(string dir){
-    ifstream infile(dir);
-    if(! infile){
-        cerr << "Error: Cannot read in file!" << endl;
-        return false;
-    }
-    else{
-        char line[MAX];
-        infile.getline(line, MAX);
-        return true;
-    }
-}
-/* ---------------------PHASE ONE END*/
 /* ---------------------PHASE TWO START*/
 bool getNextToken(int& tokenType, istream& inf, char token[]){
     char c;
@@ -71,7 +34,7 @@ bool getNextToken(int& tokenType, istream& inf, char token[]){
     return false; //can't get next char! reached EoF!
 }
 
-void outputToken(int& prevTokenType, int& tokenType, int& countEmptyParagraph,bool& doubleSpace, int& counter, ostream& outf, char token[]){
+void outputToken(int lineLength, int& prevTokenType, int& tokenType, int& countEmptyParagraph,bool& doubleSpace, int& counter, ostream& outf, char token[]){
     if(token[0] == '@' && token[1] == 'P' && token[2] == '@' && strlen(token)==3){ //IF and ONLY IF token is 3 chars long, and only consists of @P@
         if(countEmptyParagraph == 0 && prevTokenType != 2){ //no empty paragraphs have been produced.
             outf<<'\n'<<'\n'; //Output a blank new line and start off a new line
@@ -82,7 +45,7 @@ void outputToken(int& prevTokenType, int& tokenType, int& countEmptyParagraph,bo
             counter+=strlen(token);
             prevTokenType = 1; //this token is recognized as a regular word.
         }
-        else{
+        else if(countEmptyParagraph!=0 and (!(token[0] == '@' && token[1] == 'P' && token[2] == '@' && strlen(token)==3))){
             counter = 0; //
             countEmptyParagraph = 0;//reset empty paragraph, jump to next token.
             doubleSpace = false; //this prevents when running the outputToken the next time, additional spaces are produced.
@@ -93,9 +56,16 @@ void outputToken(int& prevTokenType, int& tokenType, int& countEmptyParagraph,bo
         return; //By returning, this breaks of the void outputToken function, to avoid to token '@''P''@' from being written to file.
     }
     if((doubleSpace == true and counter != 0) and (not (token[0] == '\0'))){ //Do not output ' ' if ' 'will be first character
-        outf<<' '; //ADDITIONAL SPACE.
-        counter++; //increment counter by 1 since one ADDITIONAL Space is produced.
-        doubleSpace = false;
+        if(counter+2+strlen(token)>lineLength){ //We can't fit the 2 spaces & char, must  start a new line
+            outf<<'\n'; //go to next line
+            counter=0;
+            doubleSpace = false;
+        }
+        else{ //this line can fit 2 spaces and a token
+            outf<<' '; //ADDITIONAL SPACE.
+            counter++; //increment counter by 1 since one ADDITIONAL Space is produced.
+            doubleSpace = false;
+        }
     }
     else if(doubleSpace == true and counter == 0){
         doubleSpace = false; //prev Double space resets.
@@ -124,7 +94,7 @@ void processToken(bool& returnOne, int& prevTokenType, int& tokenType, int& coun
         space = 0;//should NOT include a space before next token
     }
     if(lineLength >= counter + strlen(token)+space){ //This line hasn't finished yet, and can fit additional token & optional space.
-        outputToken(prevTokenType, tokenType, countEmptyParagraph, doubleSpace, counter, outf, token);
+        outputToken(lineLength, prevTokenType, tokenType, countEmptyParagraph, doubleSpace, counter, outf, token);
     }
     else if (lineLength < strlen(token)){
         //special case where word
@@ -132,7 +102,7 @@ void processToken(bool& returnOne, int& prevTokenType, int& tokenType, int& coun
             outf<<'\n';
         }
         returnOne = true;
-        int charsToBeWritten = strlen(token); //how many characters will need to be written
+        size_t charsToBeWritten = strlen(token); //how many characters will need to be written
         int charsWritten = 0; //already written chars
         while(charsToBeWritten > lineLength){ //While the chars to be written will fit more than one line
             for(int i =charsWritten; i<charsWritten+lineLength;i++){ //write the chars to the whole  line
@@ -154,7 +124,7 @@ void processToken(bool& returnOne, int& prevTokenType, int& tokenType, int& coun
             outf<<'\n'; //new line is needed.
             counter = 0; //reset counter.
         }
-        outputToken(prevTokenType, tokenType, countEmptyParagraph, doubleSpace, counter, outf, token);
+        outputToken(lineLength, prevTokenType, tokenType, countEmptyParagraph, doubleSpace, counter, outf, token);
     }
 }
 
@@ -174,15 +144,39 @@ int render(int lineLength, istream& inf, ostream& outf){
             processToken(returnOne, prevTokenType, tokenType, countEmptyParagraph, doubleSpace, counter, lineLength,outf,token);
         }
         processToken(returnOne, prevTokenType, tokenType, countEmptyParagraph, doubleSpace, counter, lineLength,outf,token);
+        outf<<'\n'; //last token must be followed by a \n char.
         //Line above handles the situation getNextToken returns false(reached last token of file) but there is still ONE MORE token that is to be processed.
         if(returnOne == true) //flag is true
             return 1;
         return 0;
     }
 }
-
+void testRender(int lineLength, const char input[], const char expectedOutput[], int expectedReturnValue)
+{
+    istringstream iss(input);
+    ostringstream oss;
+    ostringstream dummy;
+    streambuf* origCout = cout.rdbuf(dummy.rdbuf());
+    int retval = render(lineLength, iss, oss);
+    cout.rdbuf(origCout);
+    if ( ! dummy.str().empty())
+        cerr << "WROTE TO COUT INSTEAD OF THIRD PARAMETER FOR: " << input << endl;
+    else if (retval != expectedReturnValue)
+        cerr << "WRONG RETURN VALUE FOR: " << input << endl;
+    else if (retval == 2)
+    {
+        if ( ! oss.str().empty())
+            cerr << "WROTE OUTPUT WHEN LINELENGTH IS " << lineLength << endl;
+    }
+    else if (oss.str() != expectedOutput)
+        cerr << "WRONG RESULT FOR: " << input << endl;
+}
 int main() {
     ifstream infile("input3.txt");
     ofstream outfile("result.txt");
-    return render(40,infile,outfile);
+    testRender(7, "This\n\t\tis a\ntest\n", "This is\na test\n", 0);
+    testRender(8, "  This is a test  \n", "This is\na test\n", 0);
+    testRender(6, "Testing it\n", "Testin\ng it\n", 1);
+    testRender(-5, "irrelevant", "irrelevant", 2);
+    return render(3,infile,outfile);
 }
