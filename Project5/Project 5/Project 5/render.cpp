@@ -36,7 +36,10 @@ bool getNextToken(int& tokenType, istream& inf, char token[]){
 
 void outputToken(int lineLength, int& prevTokenType, int& tokenType, int& countEmptyParagraph,bool& doubleSpace, int& counter, ostream& outf, char token[]){
     if(token[0] == '@' && token[1] == 'P' && token[2] == '@' && strlen(token)==3){ //IF and ONLY IF token is 3 chars long, and only consists of @P@
-        if(countEmptyParagraph == 0 && prevTokenType != 2){ //no empty paragraphs have been produced.
+        if (counter == 0){ //if the first token is a @P@, no new paragraph should be produced.
+            return;
+        }
+        else if(countEmptyParagraph == 0 && prevTokenType != 2){ //no empty paragraphs have been produced.
             outf<<'\n'<<'\n'; //Output a blank new line and start off a new line
             countEmptyParagraph++;
         }
@@ -143,9 +146,17 @@ int render(int lineLength, istream& inf, ostream& outf){
         while(getNextToken(tokenType, inf,token)){
             processToken(returnOne, prevTokenType, tokenType, countEmptyParagraph, doubleSpace, counter, lineLength,outf,token);
         }
+        if(token[0] == '@' && token[1] == 'P' && token[2] == '@' && strlen(token)==3){ //if the last token is "@P@", just return new line and end program. The very last output paragraph must not be followed by an empty line.
+            outf<<'\n';
+            if(returnOne == true) //flag is true
+                return 1;
+            return 0;
+        }
         processToken(returnOne, prevTokenType, tokenType, countEmptyParagraph, doubleSpace, counter, lineLength,outf,token);
-        outf<<'\n'; //last token must be followed by a \n char.
-        //Line above handles the situation getNextToken returns false(reached last token of file) but there is still ONE MORE token that is to be processed.
+        if((!(counter == 0))){
+            outf<<'\n'; //last token must be followed by a \n char.
+            //Line above handles the situation getNextToken returns false(reached last token of file) but there is still ONE MORE token that is to be processed.
+        }
         if(returnOne == true) //flag is true
             return 1;
         return 0;
@@ -178,5 +189,5 @@ int main() {
     testRender(8, "  This is a test  \n", "This is\na test\n", 0);
     testRender(6, "Testing it\n", "Testin\ng it\n", 1);
     testRender(-5, "irrelevant", "irrelevant", 2);
-    return render(3,infile,outfile);
+    return render(10,infile,outfile);
 }
