@@ -78,6 +78,7 @@ class Player
     int   m_row;
     int   m_col;
     int   m_age;
+    int   m_health;
       // TODO: You'll probably find that a player object needs an additional
       //       data member to support your implementation of the behavior
       //       affected by the player's being blasted with gas.
@@ -168,9 +169,9 @@ int Tooter::row() const
 
 int Tooter::col() const
 {
-    // TODO: TRIVIAL:  Return the column the Tooter is at.
+    // TRIVIAL:  Return the column the Tooter is at.
     // Delete the following line and replace it with the correct code.
-    return 1;  // This implementation compiles, but is incorrect.
+    return m_col;  // This implementation compiles, but is incorrect.
 }
 
 void Tooter::move()
@@ -202,42 +203,41 @@ Player::Player(City* cp, int r, int c)
     m_row = r;
     m_col = c;
     m_age = 0;
-      // TODO: You might or might not put something here.
+    m_health = 12;
+      // You might or might not put something here.
 }
 
 int Player::row() const
 {
-    // TODO: TRIVIAL:  Return the row the player is at.
-    // Delete the following line and replace it with the correct code.
-    return 1;  // This implementation compiles, but is incorrect.
+    // TRIVIAL:  Return the row the player is at.
+    return m_row;
 }
 
 int Player::col() const
 {
-    // TODO: TRIVIAL:  Return the column the player is at.
-    // Delete the following line and replace it with the correct code.
-    return 1;  // This implementation compiles, but is incorrect.
+    // TRIVIAL:  Return the column the player is at.
+    return m_col;
 }
 
 int Player::age() const
 {
-    // TODO: TRIVIAL:  Return the player's age.
-    // Delete the following line and replace it with the correct code.
-    return 0;  // This implementation compiles, but is incorrect.
+    // TRIVIAL:  Return the player's age.
+    return m_age;
 }
 
 int Player::health() const
 {
     // TODO: TRIVIAL:  Return the player's health status.
-    // Delete the following line and replace it with the correct code.
-    return 5;  // This implementation compiles, but is incorrect.
+    return m_health;
 }
 
 bool Player::isPassedOut() const
 {
-    // TODO: TRIVIAL:  Return whether the player is passed out.
-    // Delete the following line and replace it with the correct code.
-    return false;  // This implementation compiles, but is incorrect.
+    if(m_health > 0 ){
+        return false;
+    }
+    //TRIVIAL:  Return whether the player is passed out.
+    return true;
 }
 
 void Player::preach()
@@ -256,7 +256,8 @@ void Player::move(int dir)
 
 void Player::getGassed()
 {
-    // TODO: TRIVIAL
+    m_health--;
+    //TRIVIAL
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -284,16 +285,14 @@ City::~City()
 
 int City::rows() const
 {
-    // TODO: TRIVIAL:  Return the number of rows in the city.
-    // Delete the following line and replace it with the correct code.
-    return 3;  // This implementation compiles, but is incorrect.
+    // TRIVIAL:  Return the number of rows in the city.
+    return m_rows;
 }
 
 int City::cols() const
 {
-    // TODO: TRIVIAL:  Return the number of columns in the city.
-    // Delete the following line and replace it with the correct code.
-    return 9;  // This implementation compiles, but is incorrect.
+    // TRIVIAL:  Return the number of columns in the city.
+    return m_cols;
 }
 
 Player* City::player() const
