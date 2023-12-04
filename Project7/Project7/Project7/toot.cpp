@@ -79,7 +79,7 @@ class Player
     int   m_col;
     int   m_age;
     int   m_health;
-      // TODO: You'll probably find that a player object needs an additional
+      // You'll probably find that a player object needs an additional
       //       data member to support your implementation of the behavior
       //       affected by the player's being blasted with gas.
 };
@@ -170,8 +170,7 @@ int Tooter::row() const
 int Tooter::col() const
 {
     // TRIVIAL:  Return the column the Tooter is at.
-    // Delete the following line and replace it with the correct code.
-    return m_col;  // This implementation compiles, but is incorrect.
+    return m_col;
 }
 
 void Tooter::move()
@@ -179,7 +178,27 @@ void Tooter::move()
       // Attempt to move in a random direction; if it can't move, don't move.
       // If the player is there, don't move.
     int dir = randInt(0, NUMDIRS-1);  // dir is now UP, DOWN, LEFT, or RIGHT
-    // TODO:  Move in the appropriate direction if allowed
+    if(dir == UP){
+        if(row()-1 != ((m_city->player())->row())){
+            m_city->determineNewPosition(m_row,m_col,dir);
+        }
+    }
+    else if(dir == DOWN){
+        if(row()+1 != ((m_city->player())->row())){
+            m_city->determineNewPosition(m_row,m_col,dir);
+        }
+    }
+    else if(dir == LEFT){
+        if(col()-1 != ((m_city->player())->col())){
+            m_city->determineNewPosition(m_row,m_col,dir);
+        }
+    }
+    else if(dir == RIGHT){
+        if(col()+1 != ((m_city->player())->col())){
+            m_city->determineNewPosition(m_row,m_col,dir);
+        }
+    }
+    //Move in the appropriate direction if allowed
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -227,7 +246,7 @@ int Player::age() const
 
 int Player::health() const
 {
-    // TODO: TRIVIAL:  Return the player's health status.
+    // TRIVIAL:  Return the player's health status.
     return m_health;
 }
 
@@ -249,7 +268,27 @@ void Player::preach()
 void Player::move(int dir)
 {
     m_age++;
-      // TODO:  If there is a grid position in the indicated direction that is
+    if(dir == UP){
+        if((m_city->nTootersAt(row()-1, col()))==0){
+            m_row--; //move
+        }
+    }
+    else if(dir == DOWN){
+        if((m_city->nTootersAt(row()+1, col()))==0){
+            m_row++; //move
+        }
+    }
+    else if(dir == LEFT){
+        if((m_city->nTootersAt(row(), col()-1))==0){
+            m_col--; //move
+        }
+    }
+    else if(dir == RIGHT){
+        if((m_city->nTootersAt(row(), col()+1))==0){
+            m_col++; //move
+        }
+    }
+      // If there is a grid position in the indicated direction that is
       //        adjacent to the player and vacant, move the player there;
       //        otherwise, don't move.
 }
@@ -280,7 +319,11 @@ City::City(int nRows, int nCols)
 
 City::~City()
 {
-    // TODO:  Delete the player and all remaining dynamically allocated Tooters.
+    delete m_player;
+    for(int i =0;i<tooterCount();i++){
+        delete m_tooters[i];
+    }
+    // Delete the player and all remaining dynamically allocated Tooters.
 }
 
 int City::rows() const
@@ -302,8 +345,10 @@ Player* City::player() const
 
 bool City::isPlayerAt(int r, int c) const
 {
-    // TODO:  Return true if the player is at row r, column c, otherwise false.
-    // Delete the following line and replace it with the correct code.
+    //Return true if the player is at row r, column c, otherwise false.
+    if((r == (m_player->row()))&&(c == (m_player->col()))){
+        return true;
+    }
     return false;  // This implementation compiles, but is incorrect.
 }
 
@@ -314,14 +359,19 @@ int City::tooterCount() const
 
 int City::nTootersAt(int r, int c) const
 {
-    // TODO:  Return the number of Tooters at row r, column c.
-    // Delete the following line and replace it with the correct code.
-    return 0;  // This implementation compiles, but is incorrect.
+    int count = 0;
+    // Return the number of Tooters at row r, column c.
+    for(int i =0; i<(this->tooterCount());i++){
+        if((c==m_tooters[i]->col()) && (r == m_tooters[i]->row())){
+            count++;
+        }
+    }
+    return count;
 }
 
 bool City::determineNewPosition(int& r, int& c, int dir) const
 {
-      // TODO:  If a move from row r, column c, one step in direction dir
+      // If a move from row r, column c, one step in direction dir
       //        would go off the edge of the city, leave r and c unchanged and
       //        return false.  Otherwise, set r or c so that row r, column c,
       //        is now the new position resulting from the proposed move, and
@@ -329,13 +379,27 @@ bool City::determineNewPosition(int& r, int& c, int dir) const
     switch (dir)
     {
       case UP:
-        // TODO:  Implement the behavior if dir is UP.
-        break;
+            if(isInBounds(r-1, c)){
+                r--;
+            }
+        // Implement the behavior if dir is UP.
+            break;
       case DOWN:
+            if(isInBounds(r+1, c)){
+                r++;
+            }
+            break;
       case LEFT:
+            if(isInBounds(r, c-1)){
+                c--;
+            }
+            break;
       case RIGHT:
-        // TODO:  Implement the other directions.
-        break;
+            if(isInBounds(r, c+1)){
+                c++; //C++! woohoo!
+            }
+        // :  Implement the other directions.
+            break;
       default:
         return false;
     }
@@ -347,7 +411,7 @@ void City::display() const
       // Position (row,col) in the city coordinate system is represented in
       // the array element grid[row-1][col-1]
     char grid[MAXROWS][MAXCOLS];
-    int r, c;
+    int r, c = 0;
     
         // Fill the grid with dots
     for (r = 0; r < rows(); r++)
@@ -355,7 +419,43 @@ void City::display() const
             grid[r][c] = '.';
 
         // Indicate each Tooter's position
-    // TODO:  If one Tooter is at some grid point, set the char to 'T'.
+    // If one Tooter is at some grid point, set the char to 'T'.
+    int tooterNum;
+    for(int i =0; i<tooterCount();i++){
+        tooterNum = nTootersAt(m_tooters[i]->row(),m_tooters[i]->col());
+        switch(tooterNum){
+            case 1:
+                grid[m_tooters[i]->row()-1][m_tooters[i]->col()-1] = 'T';
+                break;
+            case 2:
+                grid[m_tooters[i]->row()-1][m_tooters[i]->col()-1] = '2';
+                break;
+            case 3:
+                grid[m_tooters[i]->row()-1][m_tooters[i]->col()-1] = '3';
+                break;
+            case 4:
+                grid[m_tooters[i]->row()-1][m_tooters[i]->col()-1] = '4';
+                break;
+            case 5:
+                grid[m_tooters[i]->row()-1][m_tooters[i]->col()-1] = '5';
+                break;
+            case 6:
+                grid[m_tooters[i]->row()-1][m_tooters[i]->col()-1] = '6';
+                break;
+            case 7:
+                grid[m_tooters[i]->row()-1][m_tooters[i]->col()-1] = '7';
+                break;
+            case 8:
+                grid[m_tooters[i]->row()-1][m_tooters[i]->col()-1] = '8';
+                break;
+            case 9:
+                grid[m_tooters[i]->row()-1][m_tooters[i]->col()-1] = '9';
+                break;
+        }
+        if(tooterNum>9){
+            grid[m_tooters[i]->row()-1][m_tooters[i]->col()-1] = '9';
+        }
+    }
     //        If it's 2 though 8, set it to '2' through '8'.
     //        For 9 or more, set it to '9'.
 
@@ -404,7 +504,11 @@ bool City::addTooter(int r, int c)
       // Don't add a Tooter on a spot with a player
     if (m_player != nullptr  &&  m_player->row() == r  &&  m_player->col() == c)
         return false;
-
+    if(MAXTOOTERS == tooterCount()){
+        return false;
+    }
+    m_tooters[tooterCount()] = new Tooter(this, r,c);
+    m_nTooters++;
       // If there are MAXTOOTERS unconverted Tooters, return false.
       // Otherwise, dynamically allocate a new Tooter at coordinates (r,c).
       // Save the pointer to the newly allocated Tooter and return true.
@@ -414,8 +518,8 @@ bool City::addTooter(int r, int c)
       // Tooters are added, then some are converted and removed from the city,
       // then more are added.
 
-      // TODO:  Implement this.
-    return false;  // This implementation compiles, but is incorrect.
+      // Implement this.
+    return true;  // This implementation compiles, but is incorrect.
 }
 
 bool City::addPlayer(int r, int c)
@@ -436,23 +540,81 @@ bool City::addPlayer(int r, int c)
     return true;
 }
 
+bool isDiagAdj(const int rp, const int cp, const int rt, const int ct){
+    if((rp-1 == rt) && (cp-1 == ct)){
+        return true;
+    }
+    else if((rp+1 == rt) && (cp-1 == ct)){
+        return true;
+    }
+    else if((rp-1 == rt) && (cp+1 == ct)){
+        return true;
+    }
+    else if((rp+1 == rt) && (cp+1 == ct)){
+        return true;
+    }
+    return false;
+}
+
+bool isOrthoAdj(const int rp, const int cp, const int rt, const int ct){
+    if((rp - 1 == rt) && (cp == ct)){
+        return true;
+    }
+    else if((rp + 1 == rt) && (cp == ct)){
+        return true;
+    }
+    else if((rp == rt) && (cp+1 == ct)){
+        return true;
+    }
+    else if((rp == rt) && (cp -1 == ct)){
+        return true;
+    }
+    return false;
+}
+
 void City::preachToTootersAroundPlayer()
 {
+    int rp, cp, rt, ct, rndInt;
+    rp = m_player->row();
+    cp = m_player->col();
+    for(int i = 0; i< m_nTooters; i++){
+        rt = m_tooters[i]->row();
+        ct = m_tooters[i]->col();
+        if(isDiagAdj(rp, cp, rt, ct) || isOrthoAdj(rp, cp, rt, ct)){
+            rndInt = randInt(1,3);
+            if (rndInt == 1 || rndInt == 2){
+                delete m_tooters[i];
+                for(int j=i;j<m_nTooters-1;j++){
+                    m_tooters[j] = m_tooters[j+1];
+                }
+                m_nTooters--;
+            }
+        }
+    }
       // Preach to Tooters orthogonally or diagonally adjacent to player.
       // If a Tooter is converted, destroy it and remove it from the city,
       // since we have no further need to display it or have it interact with
       // the player.
 
-      // TODO:  Implement this.
+      // Implement this.
 }
 
 void City::moveTooters()
 {
     for (int k = 0; k < m_nTooters; k++)
     {
-      // TODO:  Have the k-th Tooter in the city make one move.
+        m_tooters[k]->move();
+      // Have the k-th Tooter in the city make one move.
       //        If that move results in that Tooter being orthogonally
       //        adjacent to the player, the player suffers a gas blast.
+        int rp, cp, rt, ct;
+        rp = m_player->row();
+        cp = m_player->col();
+        rt = m_tooters[k]->row();
+        ct = m_tooters[k]->col();
+        if(isOrthoAdj(rp, cp, rt, ct)){
+            m_player->getGassed();
+        }
     }
 }
 
