@@ -177,24 +177,40 @@ void Tooter::move()
 {
       // Attempt to move in a random direction; if it can't move, don't move.
       // If the player is there, don't move.
+    int rp = (m_city->player())->row();
+    int cp =(m_city->player())->col();
+    int ct = col();
+    int rt = row();
     int dir = randInt(0, NUMDIRS-1);  // dir is now UP, DOWN, LEFT, or RIGHT
     if(dir == UP){
-        if(row()-1 != ((m_city->player())->row())){
+        if((rt-1 == rp)&&(ct == cp)){
+            return;
+        }
+        else{
             m_city->determineNewPosition(m_row,m_col,dir);
         }
     }
     else if(dir == DOWN){
-        if(row()+1 != ((m_city->player())->row())){
+        if((rt+1 == rp)&&(ct == cp)){
+            return;
+        }
+        else{
             m_city->determineNewPosition(m_row,m_col,dir);
         }
     }
     else if(dir == LEFT){
-        if(col()-1 != ((m_city->player())->col())){
+        if((rt == rp) && (ct-1 == cp)){
+            return;
+        }
+        else{
             m_city->determineNewPosition(m_row,m_col,dir);
         }
     }
     else if(dir == RIGHT){
-        if(col()+1 != ((m_city->player())->col())){
+        if((rt == rp) && (ct+1 == cp)){
+            return;
+        }
+        else{
             m_city->determineNewPosition(m_row,m_col,dir);
         }
     }
@@ -270,22 +286,22 @@ void Player::move(int dir)
     m_age++;
     if(dir == UP){
         if((m_city->nTootersAt(row()-1, col()))==0){
-            m_row--; //move
+            m_city->determineNewPosition(m_row,m_col,dir);
         }
     }
     else if(dir == DOWN){
         if((m_city->nTootersAt(row()+1, col()))==0){
-            m_row++; //move
+            m_city->determineNewPosition(m_row,m_col,dir);
         }
     }
     else if(dir == LEFT){
         if((m_city->nTootersAt(row(), col()-1))==0){
-            m_col--; //move
+            m_city->determineNewPosition(m_row,m_col,dir);
         }
     }
     else if(dir == RIGHT){
         if((m_city->nTootersAt(row(), col()+1))==0){
-            m_col++; //move
+            m_city->determineNewPosition(m_row,m_col,dir);
         }
     }
       // If there is a grid position in the indicated direction that is
@@ -588,6 +604,7 @@ void City::preachToTootersAroundPlayer()
                     m_tooters[j] = m_tooters[j+1];
                 }
                 m_nTooters--;
+                i--;
             }
         }
     }
